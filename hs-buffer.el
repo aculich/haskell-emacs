@@ -94,18 +94,18 @@
                         'rear-nonsticky t
                         'prompt t))))
 
-(defun hs-buffer-echo-read-only (session message)
+(defun hs-buffer-echo-read-only (project message)
   "Echo a read only piece of text before the prompt."
-  (with-current-buffer (hs-buffer session)
+  (with-current-buffer (hs-buffer project)
     (save-excursion
       (hs-buffer-goto-end-point)
       (insert (propertize (concat "\n" message)
                           'read-only t
                           'rear-nonsticky t)))))
 
-(defun hs-buffer-echo-type (session message)
+(defun hs-buffer-echo-type (project message)
   "Echo a read only piece of text before the prompt."
-  (with-current-buffer (hs-buffer session)
+  (with-current-buffer (hs-buffer project)
     (save-excursion
       (hs-buffer-goto-end-point)
       (insert (propertize (concat "\n" message)
@@ -113,9 +113,9 @@
                           'face 'hs-faces-type-result
                           'rear-nonsticky t)))))
 
-(defun hs-buffer-echo-read-only-incomplete (session message)
+(defun hs-buffer-echo-read-only-incomplete (project message)
   "Echo a read only piece of text before the prompt."
-  (with-current-buffer (hs-buffer session)
+  (with-current-buffer (hs-buffer project)
     (save-excursion
       (hs-buffer-goto-end-point)
       (insert (propertize message
@@ -124,9 +124,9 @@
                           'rear-nonsticky t
                           'result t)))))
 
-(defun hs-buffer-echo-error (session message)
+(defun hs-buffer-echo-error (project message)
   "Echo an error message before the prompt."
-  (with-current-buffer (hs-buffer session)
+  (with-current-buffer (hs-buffer project)
     (save-excursion
       (hs-buffer-goto-end-point)
       (insert "\n")
@@ -136,9 +136,9 @@
                           'rear-nonsticky t
                           'error t)))))
 
-(defun hs-buffer-echo-warning (session message)
+(defun hs-buffer-echo-warning (project message)
   "Echo a warning message."
-  (with-current-buffer (hs-buffer session)
+  (with-current-buffer (hs-buffer project)
     (save-excursion
       (hs-buffer-goto-end-point)
       (insert "\n")

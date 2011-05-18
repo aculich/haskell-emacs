@@ -1,4 +1,4 @@
-;;; hs-config.el — Elisp configurable items.
+;;; hs-faces.el — Faces used throughout.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,16 +20,34 @@
 
 ;;; Code:
 
-(defun hs-config ())
+(require 'cl)
 
-(defvar hs-config-default-project-name "haskell")
+(defface hs-faces-ghci-prompt
+  '((t :inherit 'font-lock-function-name-face))
+  "Face for the prompt."
+  :group 'hs)
 
-(defvar hs-config-cabal-dev-bin "/home/chris/.cabal/bin/cabal-dev")
+(defface hs-faces-ghci-result
+  '((t :inherit 'font-lock-string-face))
+  "Face for the result."
+  :group 'hs)
 
-(defvar hs-config-ghci-bin "ghci")
+(defface hs-faces-type-result
+  '((t :inherit 'font-lock-type-face))
+  "Face for the result."
+  :group 'hs)
 
-(defvar hs-config-process-prompt-regex "\\(^> $\\|\n[> ]*> $\\)")
+(defface hs-faces-ghci-error
+  '((t :inherit 'compilation-warning))
+  "Face for error messages."
+  :group 'hs)
 
-(defvar hs-config-buffer-prompt "λ> ")
+(defface hs-faces-ghci-warning
+  '((t :inherit 'compilation-warning))
+  "Face for warning messages."
+  :group 'hs)
 
-(provide 'hs-config)
+(defface hs-faces-ghci-error '((t (:background "#000")))
+  :group 'hs)
+
+(provide 'hs-faces)

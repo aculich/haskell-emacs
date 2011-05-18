@@ -34,7 +34,8 @@
 (defstruct
   (hs-process
    (:constructor hs-process-make))
-  ih-cmd
+  process
+  cmd
   name
   response
   response-cursor

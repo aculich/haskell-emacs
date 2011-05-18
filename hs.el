@@ -24,6 +24,8 @@
 (require 'hs-types)
 (require 'hs-project)
 (require 'hs-process)
+(require 'hs-faces)
+(require 'hs-buffer)
 (require 'hs-config)
 
 (defun hs ()

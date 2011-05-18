@@ -55,9 +55,9 @@
                   (mapcar 'hs-project-name *hs-projects*))))
        (when name
          (let ((project (find-if (lambda (project)
-                     (string= (hs-project-name project)
-                              name))
-                   *hs-projects*)))
+                                   (string= (hs-project-name project)
+                                            name))
+                                 *hs-projects*)))
            (if project
                project
              (when (y-or-n-p (hs-lang-create-new-project name))
@@ -68,13 +68,15 @@
   (interactive)
   (let ((name (or provided-name
                   (read-from-minibuffer (hs-lang-new-project-name)
-                                        hs-default-project-name))))
-    (let ((project (hs-project-make 
-                    :process nil
-                    :name name
-                    :cabal-dir nil
-                    :cabal-dev-dir nil
-                    :prompt-history '())))
+                                        hs-config-default-project-name))))
+    (let* ((project (hs-project-make 
+                     :process nil
+                     :name name
+                     :cabal-dir nil
+                     :cabal-dev-dir nil
+                     :prompt-history '()))
+           (process (hs-process-start project))
+           (buffer (hs-buffer-create project)))
       (add-to-list '*hs-projects* project)
       project)))
 

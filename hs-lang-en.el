@@ -31,4 +31,7 @@
 (defun hs-lang-create-new-project (name)
   (format "Create new project “%s”? " name))
 
+(defun hs-lang-welcome-message ()
+  "Welcome to Haskell. Prepare your face.")
+
 (provide 'hs-lang-en)

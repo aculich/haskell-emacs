@@ -40,7 +40,8 @@
           (start-process
            (hs-process-name process)
            nil
-           hs-config-cabal-dev-bin))
+           hs-config-cabal-dev-bin
+           "ghci"))
     (set-process-filter (hs-process-process process)
                         'hs-process-filter)
     (setf (hs-project-process project) process)))
@@ -63,9 +64,30 @@
 (defun hs-process-collect (project response)
   "Collect input for the response until receives a prompt."
   (let ((process (hs-project-process project)))
-   (setf (hs-process-response process)
-         (concat (hs-process-response process) response))
-   (while (hs-process-live-updates process))))
+    (setf (hs-process-response process)
+          (concat (hs-process-response process) response))
+    (while (hs-process-live-updates process))
+    (when (string-match hs-config-process-prompt-regex
+                        (hs-process-response (hs-project-process project)))
+      (when (hs-process-response-handler
+             project
+             (replace-regexp-in-string
+              hs-config-process-prompt-regex
+              ""
+              (hs-process-response (hs-project-process project))))
+        (progn (setf (hs-process-response-cursor (hs-project-process project)) 0)
+               (setf (hs-process-response (hs-project-process project)) "")
+               (setf (hs-process-cmd (hs-project-process project)) 'none)
+               (setf (hs-process-response-callback (hs-project-process project))
+                     nil))))))
+
+(defun hs-process-response-handler (project response)
+  "Handle receiving a type response."
+  (ecase (hs-process-cmd (hs-project-process project))
+    ('eval (progn (when (not (string= "" response))
+                    (hs-buffer-eval-insert-result project response))
+                  (hs-buffer-prompt project)
+                  t))))
 
 (defun hs-process-live-updates (process)
   "Trigger any updates that happen during receiving a response."
@@ -76,20 +98,26 @@
   "Just log out any arbitrary output."
   (let ((new-data (substring (hs-process-response process)
                              (hs-process-response-cursor process))))
-    ;(hs-buffer-echo-read-only-incomplete session new-data)
+                                        ;(hs-buffer-echo-read-only-incomplete session new-data)
     (message new-data)
     (setf (hs-process-response-cursor process)
-          (+ (hs-process-response-cursor session)
+          (+ (hs-process-response-cursor project)
              (length new-data)))
     nil))
 
 (defun hs-process-trigger-background-arbitrary-updates (process)
   "Just log out any arbitrary output."
-  (let ((new-data (substring (hs-process-response session)
-                             (hs-process-response-cursor session))))
+  (let ((new-data (substring (hs-process-response process)
+                             (hs-process-response-cursor process))))
     (mapc 'message (split-string new-data "\n"))
-    (setf (hs-process-response-cursor session)
-          (+ (hs-process-response-cursor session) (length new-data)))
+    (setf (hs-process-response-cursor process)
+          (+ (hs-process-response-cursor process) (length new-data)))
     nil))
+
+(defun hs-process-eval (project expr)
+  "Evaluate an expression."
+  (setf (hs-process-cmd (hs-project-process project)) 'eval)
+  (process-send-string (hs-process-process (hs-project-process project))
+                       (concat expr "\n")))
 
 (provide 'hs-process)

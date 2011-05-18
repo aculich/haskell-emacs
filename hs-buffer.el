@@ -33,6 +33,25 @@
     map)
   "Interactive Haskell mode map.")
 
+(define-key hs-interactive-mode-map (kbd "RET")
+  '(lambda ()
+     (interactive)
+     (hs-buffer-handle-ret *hs-project*)))
+
+;; (define-key hs-mode-map (kbd "M-p")
+;;   '(lambda ()
+;;      (interactive)
+;;      (hs-prompt-history-cycle *hs-session* 'left)))
+;; (define-key hs-mode-map (kbd "M-n")
+;;   '(lambda ()
+;;      (interactive)
+;;      (hs-prompt-history-cycle *hs-session* 'right)))
+;; (define-key hs-mode-map (kbd "C-a")
+;;   (lambda () (interactive)
+;;     (hs-prompt-goto-start *hs-session*)))
+;; (define-key hs-mode-map (kbd "\C-c\C-t")
+;;   'hs-editor-type-at-point)
+
 (defun hs-buffer-create (project)
   "Make an interactive Haskell buffer."
   (get-buffer-create (hs-buffer-name project))
@@ -128,5 +147,64 @@
                           'read-only t
                           'rear-nonsticky t
                           'warning t)))))
+
+(defun hs-buffer-handle-ret (project)
+  (interactive)
+  (with-current-buffer (hs-buffer project)
+    (if (save-excursion (search-backward-regexp hs-config-buffer-prompt
+                                                (line-beginning-position)
+                                                t
+                                                1))
+        (hs-buffer-handle project)
+      ;; This is a cheap solution. Better is to highlight all lines
+      ;; with problems in the buffers themselves; have an in-memory
+      ;; mapping of latest errors.
+      (let ((line (buffer-substring-no-properties (line-beginning-position)
+                                                  (line-end-position))))
+        (if (string-match "^[^:]+: \\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\):" line)
+            (let ((file (match-string 1 line))
+                  (line (match-string 2 line))
+                  (col (match-string 3 line)))
+              (let* ((cabal-path (hs-project-cabal-dir project))
+                     (src-path (hs-process-current-dir (hs-project-process project)))
+                     (cabal-relative-file (concat cabal-path "/" file))
+                     (src-relative-file (concat src-path "/" file)))
+                (let ((file (cond ((file-exists-p cabal-relative-file)
+                                   cabal-relative-file)
+                                  ((file-exists-p src-relative-file) 
+                                   src-relative-file))))
+                  (when file
+                    (other-window 1)
+                    (find-file file)
+                    (goto-line (string-to-number line))
+                    (goto-char (+ (point) (string-to-number col))))))))))))
+
+(defun hs-buffer-handle (project)
+  "Take input from the current prompt."
+  (let ((input
+         (substring (buffer-substring-no-properties
+                     (save-excursion
+                       (goto-char (point-max))
+                       (search-backward-regexp hs-config-buffer-prompt))
+                     (point-max))
+                    (length hs-config-buffer-prompt))))
+    ;;    (hs-buffer-add-to-history project input)
+    (hs-process-eval project
+                     (replace-regexp-in-string
+                      "\n"
+                      " "
+                      input))))
+
+(defun hs-buffer-eval-insert-result (project result)
+  "Insert the result of an eval."
+  (with-current-buffer (hs-buffer project)
+    (goto-char (point-max))
+    (insert "\n")
+    (insert (propertize result
+                        'face 'hs-faces-ghci-result
+                        'read-only t
+                        'rear-nonsticky t
+                        'prompt t
+                        'result t))))
 
 (provide 'hs-buffer)

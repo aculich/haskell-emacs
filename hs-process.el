@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs-process.el — Interaction with the inferior process.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -22,16 +22,9 @@
 
 (require 'hs-lang-en)
 (require 'hs-types)
-(require 'hs-project)
-(require 'hs-process)
-(require 'hs-config)
 
-(defun hs ()
-  "Initialize everything necessary for correct functioning."
-  (interactive)
-  (unless (default-boundp '*hs-projects*)
-    (setq *hs-projects* '()))
-  (unless (default-boundp '*hs-project*)
-    (setq *hs-project* nil)))
+(require 'cl)
 
-(provide 'hs)
+(defun hs-process ())
+
+(provide 'hs-process)

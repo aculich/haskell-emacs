@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs-config.el — Elisp configurable items.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,18 +20,8 @@
 
 ;;; Code:
 
-(require 'hs-lang-en)
-(require 'hs-types)
-(require 'hs-project)
-(require 'hs-process)
-(require 'hs-config)
+(defun hs-config ())
 
-(defun hs ()
-  "Initialize everything necessary for correct functioning."
-  (interactive)
-  (unless (default-boundp '*hs-projects*)
-    (setq *hs-projects* '()))
-  (unless (default-boundp '*hs-project*)
-    (setq *hs-project* nil)))
+(defvar hs-default-project-name "haskell")
 
-(provide 'hs)
+(provide 'hs-config)

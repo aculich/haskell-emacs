@@ -22,4 +22,13 @@
 
 (defun hs-lang-en ())
 
+(defun hs-lang-new-project-name ()
+  "New project name: ")
+
+(defun hs-lang-choose-project ()
+  "Choose project: ")
+
+(defun hs-lang-create-new-project (name)
+  (format "Create new project “%s”? " name))
+
 (provide 'hs-lang-en)

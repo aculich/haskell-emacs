@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs-types.el — All types in the project.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,18 +20,28 @@
 
 ;;; Code:
 
-(require 'hs-lang-en)
-(require 'hs-types)
-(require 'hs-project)
-(require 'hs-process)
-(require 'hs-config)
+(require 'cl)
 
-(defun hs ()
-  "Initialize everything necessary for correct functioning."
-  (interactive)
-  (unless (default-boundp '*hs-projects*)
-    (setq *hs-projects* '()))
-  (unless (default-boundp '*hs-project*)
-    (setq *hs-project* nil)))
+(defstruct
+  (hs-project
+   (:constructor hs-project-make))
+  process
+  name
+  cabal-dir
+  cabal-dev-dir
+  prompt-history)
 
-(provide 'hs)
+(defstruct
+  (hs-process
+   (:constructor hs-process-make))
+  ih-cmd
+  name
+  response
+  response-cursor
+  load-dirs
+  current-dir
+  response-callback)
+
+(defun hs-types ())
+
+(provide 'hs-types)

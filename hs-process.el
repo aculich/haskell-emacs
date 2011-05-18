@@ -86,13 +86,26 @@
 
 (defun hs-process-response-handler (project response)
   "Handle receiving a type response."
-  (ecase (hs-process-cmd (hs-project-process project))
-    ('startup t)
-    ('eval (progn (when (not (string= "" response))
-                    (hs-buffer-eval-insert-result project response))
-                  (hs-buffer-prompt project)
-                  t))
-    ('load-file (progn t))))
+  (let ((process (hs-project-process project)))
+    (ecase (hs-process-cmd process)
+      ('startup t)
+      ('eval (progn (when (not (string= "" response))
+                      (hs-buffer-eval-insert-result project response))
+                    (hs-buffer-prompt project)
+                    t))
+      ('load-file (progn t))
+      ('arbitrary (progn (hs-buffer-echo-read-only project
+                                                   "Command finished.")
+                         (message "Command finished.")
+                         t))
+      ('build
+       (let ((cursor (hs-process-response-cursor process)))
+         (setf (hs-process-response-cursor process) 0)
+         (while (hs-process-trigger-type-errors-warnings project))
+         (setf (hs-process-response-cursor process) cursor))
+       (hs-buffer-echo-read-only project "Done.")
+       (message "Done.")
+       t))))
 
 (defun hs-process-live-updates (project)
   "Trigger any updates that happen during receiving a response."
@@ -193,15 +206,15 @@
 (defun hs-process-strip-dir (project file)
   "Strip the load dir from the file path."
   (let ((cur-dir (hs-process-current-dir (hs-project-process project))))
-   (if (> (length file) (length cur-dir))
-       (if (string= (substring file 0 (length cur-dir))
-                    cur-dir)
-           (replace-regexp-in-string 
-            "^[/\\]" ""
-            (substring file 
-                       (length cur-dir)))
-         file)
-     file)))
+    (if (> (length file) (length cur-dir))
+        (if (string= (substring file 0 (length cur-dir))
+                     cur-dir)
+            (replace-regexp-in-string 
+             "^[/\\]" ""
+             (substring file 
+                        (length cur-dir)))
+          file)
+      file)))
 
 (defun hs-process-consume (project regex)
   "Consume a regex from the response and move the cursor along if succeed."

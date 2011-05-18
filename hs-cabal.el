@@ -1,0 +1,59 @@
+;;; hs-process.el — Interaction with the inferior process.
+
+;; Copyright (C) 2011 Chris Done
+
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+(require 'hs-lang-en)
+(require 'hs-types)
+
+(require 'cl)
+
+(defun hs-cabal ())
+
+(defun hs-cabal-build (project)
+  (hs-cabal-command project "build")
+  (setf (hs-process-cmd (hs-project-process project)) 'build))
+
+(defun hs-cabal-arbitrary-command (project command)
+  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
+  (hs-buffer-echo-read-only project "Cabal output:\n")
+  (hs-cabal-command project command))
+
+(defun hs-cabal-command (project command)
+  "Send the Cabal build command."
+  (interactive)
+  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
+  (process-send-string
+   (hs-process-process (hs-project-process project))
+   (concat ":!cd " (hs-cabal-dir project)
+           " && cabal-dev " command
+           " && cd " (hs-process-current-dir (hs-project-process project)) "\n")))
+
+(defun hs-cabal-dir (project)
+  "Get the Cabal project dir."
+  (if (hs-project-cabal-dir project)
+      (hs-project-cabal-dir project)
+    (setf (hs-project-cabal-dir project)
+          (read-from-minibuffer 
+           "Cabal project path: "
+           (hs-process-current-dir
+            (hs-project-process project))))))
+
+(provide 'hs-cabal)

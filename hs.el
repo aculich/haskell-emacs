@@ -27,6 +27,7 @@
 (require 'hs-faces)
 (require 'hs-buffer)
 (require 'hs-config)
+(require 'hs-errors)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

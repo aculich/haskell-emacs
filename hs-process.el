@@ -44,6 +44,10 @@
            "ghci"))
     (set-process-filter (hs-process-process process)
                         'hs-process-filter)
+    (process-send-string (hs-process-process (hs-project-process project))
+                         (concat ":set prompt \"> \"\n"))
+    (process-send-string (hs-process-process (hs-project-process project))
+                         ":set -v1\n")
     (setf (hs-project-process project) process)))
 
 (defun hs-process-filter (proc response)
@@ -84,6 +88,7 @@
 (defun hs-process-response-handler (project response)
   "Handle receiving a type response."
   (ecase (hs-process-cmd (hs-project-process project))
+    ('startup t)
     ('eval (progn (when (not (string= "" response))
                     (hs-buffer-eval-insert-result project response))
                   (hs-buffer-prompt project)
@@ -92,7 +97,88 @@
 (defun hs-process-live-updates (process)
   "Trigger any updates that happen during receiving a response."
   (case (hs-process-cmd process)
-    ('arbitrary (hs-process-trigger-arbitrary-updates process))))
+    ('arbitrary (hs-process-trigger-arbitrary-updates process))
+    ('load-file (hs-process-trigger-build-updates process))
+    ('startup (hs-process-trigger-build-updates process))
+    ('build (hs-process-trigger-build-updates process))))
+
+(defun hs-process-trigger-build-updates (project)
+  "Trigger the 'loading module' updates if any."
+  (cond
+   ((hs-process-consume
+     project
+     (concat "\\[\\([0-9]+\\) of \\([0-9]+\\)\\]"
+             " Compiling \\([^ ]+\\)[ ]+"
+             "( \\([^ ]+\\), \\([^ ]+\\) )[\r\n]+"))
+    (hs-process-show-load-message
+     project
+     (match-string 3 (hs-process-response (hs-project-process project)))
+     (match-string 4 (hs-process-response (hs-project-process project))))
+    t)
+   ((hs-process-consume project "^Preprocessing executables for \\(.+?\\)\\.\\.\\.")
+    (hs-buffer-echo-read-only
+     project
+     (format "Preprocessing: %s"
+             (match-string 1 (hs-process-response (hs-project-process project))))))
+   ((hs-process-consume project "\nBuilding \\(.+?\\)\\.\\.\\.")
+    (hs-buffer-echo-read-only
+     project
+     (format "Building: %s"
+             (match-string 1 (hs-process-response (hs-project-process project))))))
+   ((hs-process-consume project "Linking \\(.+?\\) \\.\\.\\.")
+    (let ((msg (format "Linking: %s"
+                       (match-string 1 (hs-process-response 
+                                        (hs-project-process project))))))
+      (hs-buffer-echo-read-only project msg)
+      (message msg)))
+   ((hs-process-consume project "Failed, modules loaded: \\(.+\\)$")
+    (let ((cursor (hs-project-process-response-cursor project)))
+      (setf (hs-project-process-response-cursor project) 0)
+      (while (hs-process-trigger-type-errors-warnings project))
+      (setf (hs-project-process-response-cursor project) cursor)
+      (hs-buffer-echo-error project "Compilation failed.")
+      (message "Compilation failed."))
+    t)
+   ((hs-process-consume project "Ok, modules loaded: \\(.+\\)$")
+    (let ((cursor (hs-project-process-response-cursor project)))
+      (setf (hs-project-process-response-cursor project) 0)
+      (while (hs-process-trigger-type-errors-warnings project))
+      (setf (hs-project-process-response-cursor project) cursor)
+      (message "OK."))
+    t)
+   ((hs-process-consume project "Loading package \\([^ ]+\\) ... linking ... done.\n")
+    (message
+     (format "Loading: %s"
+             (match-string 1 (hs-process-response (hs-project-process project))))))
+   ((hs-process-consume
+     project
+     "package flags have changed, resetting and loading new packages...")
+    (message "Package flags changed, resetting and reloading."))))
+
+(defun hs-process-consume (project regex)
+  "Consume a regex from the response and move the cursor along if succeed."
+  (when (string-match regex
+                      (hs-process-response (hs-project-process project))
+                      (hs-process-response-cursor (hs-project-process project)))
+    (setf (hs-process-response-cursor (hs-project-process project))
+          (match-end 0))
+    t))
+
+(defun hs-process-show-load-message (project module-name file-name)
+  "Show the 'Loading X' message."
+  (let* ((file-name-module
+          (replace-regexp-in-string
+           "\\.hs$" ""
+           (replace-regexp-in-string "[\\/]" "." file-name)))
+         (msg (format "Compiling: %s%s"
+                      module-name
+                      (if (or t (string= file-name-module module-name))
+                          ""
+                        (format " [%s]" file-name)))))
+    (message msg)
+    (when (eq (hs-process-cmd (hs-project-process project))
+              'build)
+      (hs-buffer-echo-read-only project msg))))
 
 (defun hs-process-trigger-arbitrary-updates (process)
   "Just log out any arbitrary output."
@@ -119,5 +205,30 @@
   (setf (hs-process-cmd (hs-project-process project)) 'eval)
   (process-send-string (hs-process-process (hs-project-process project))
                        (concat expr "\n")))
+
+(defun hs-process-load-file (project &optional file)
+  "Load a file."
+  (interactive)
+  (if (not (hs-process-current-dir (hs-project-process project)))
+      (hs-process-cd)
+    (let ((file-name (if file
+                         file
+                       (buffer-file-name))))
+      (setf (hs-process-cmd (hs-project-process project)) 'load-file)
+      (process-send-string (hs-process-process (hs-project-process project))
+                           (concat ":load " file-name "\n")))))
+
+(defun hs-process-cd (project dir)
+  "Evaluate an expression."
+  (if (file-directory-p dir)
+      (progn
+        (setf (hs-process-current-dir (hs-project-process project)) dir)
+        (process-send-string (hs-process-process (hs-project-process project))
+                             (concat ":cd " dir "\n"))
+        (hs-buffer-echo-read-only project
+                                  (format "Directory change: %s" dir))
+        (with-current-buffer (hs-buffer-name project)
+          (cd dir)))
+    (error "Directory %s does not exist." dir)))
 
 (provide 'hs-process)

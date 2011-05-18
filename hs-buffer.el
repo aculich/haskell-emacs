@@ -149,6 +149,7 @@
                           'warning t)))))
 
 (defun hs-buffer-handle-ret (project)
+  "Handle the RET key in the buffer."
   (interactive)
   (with-current-buffer (hs-buffer project)
     (if (save-excursion (search-backward-regexp hs-config-buffer-prompt

@@ -45,6 +45,9 @@
    * installed modules with automatic importation and Cabal-file dependency adding
   * Automatic importation and de-importation of modules for used symbols
   * Hoogle search support
+  * Hayoo search support
 * Automake/correctness checking
   * Compilation on an interval
   * On-the-fly hint suggestions
+* Documentation browsing
+  * Ability to browse Haddock documentation inside Emacs (possibility for texinfo here)

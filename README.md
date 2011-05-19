@@ -28,6 +28,9 @@
   * Cabal-dev local-repository support
   * Interactive creation/management of Cabal file
 * Source code editing
+  * Jump to import list for quick editing
+  * Align imports up nicely
+  * Sort imports alphabetically
   * Haskell-aware code-folding
   * Truly syntax-aware editing
   * Binding tracking

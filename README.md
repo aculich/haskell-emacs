@@ -28,6 +28,7 @@
   * Cabal-dev local-repository support
   * Interactive creation/management of Cabal file
 * Source code editing
+  * Haskell-aware code-folding
   * Truly syntax-aware editing
   * Binding tracking
   * Syntax-aware indentation choices

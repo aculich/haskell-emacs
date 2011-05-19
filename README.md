@@ -22,6 +22,7 @@
   * Debugger tracebacks
   * Module awareness
 * Cabal integration
+  * Creation! (And magit integration)
   * Configuration
   * Automatic dependency inserting
   * Automatic synchronization with GHCi session

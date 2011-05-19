@@ -36,7 +36,7 @@
 (define-key hs-interactive-mode-map (kbd "RET")
   '(lambda ()
      (interactive)
-     (hs-buffer-handle-ret *hs-project*)))
+     (hs-buffer-handle-ret (hs-project))))
 
 ;; (define-key hs-mode-map (kbd "M-p")
 ;;   '(lambda ()

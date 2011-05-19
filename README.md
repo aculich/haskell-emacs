@@ -9,6 +9,7 @@
 * Completion based on whole project
 * Jump to definition
 * Go to error/warning line and column
+* In-console completion
 
 # TODO
 
@@ -19,7 +20,6 @@
   * Show-based value inspection
   * Type error handling
   * Debugger tracebacks
-  * In-console completion
   * Module awareness
 * Cabal integration
   * Configuration

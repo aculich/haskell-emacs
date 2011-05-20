@@ -14,7 +14,7 @@
 * Sort imports alphabetically
 * Align imports up nicely
 * Cabal file editing
-  * Cabal-dev local-repository support
+* Cabal-dev local-repository support
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 

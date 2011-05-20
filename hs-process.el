@@ -263,9 +263,9 @@
 
 (defun hs-process-trigger-arbitrary-updates (project)
   "Just log out any arbitrary output."
-  (let ((process (hs-project-process process))
-        (new-data (substring (hs-process-response process)
-                             (hs-process-response-cursor process))))
+  (let* ((process (hs-project-process project))
+         (new-data (substring (hs-process-response process)
+                              (hs-process-response-cursor process))))
     (hs-buffer-echo-read-only-incomplete project new-data)
     (message new-data)
     (setf (hs-process-response-cursor process)

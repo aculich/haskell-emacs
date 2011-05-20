@@ -32,6 +32,38 @@
   (interactive)
   (hs-cabal-build (hs-project)))
 
+(defun hs-cabal-ido-interactive ()
+  "Interactively choose a cabal command to run."
+  (interactive)
+  (hs-cabal-arbitrary-command
+   (hs-project)
+   (read-from-minibuffer 
+    "Command: "
+    (ido-completing-read "Command: " hs-cabal-commands))))
+
+(defvar hs-cabal-commands
+  '("install"
+    "update"
+    "list"
+    "info"
+    "upgrade"
+    "fetch"
+    "unpack"
+    "check"
+    "sdist"
+    "upload"
+    "report"
+    "init"
+    "configure"
+    "build"
+    "copy"
+    "haddock"
+    "clean"
+    "hscolour"
+    "register"
+    "test"
+    "help"))
+
 (defun hs-cabal-build (project)
   "Cabal build the given project."
   (hs-cabal-command project "build")
@@ -39,7 +71,6 @@
 
 (defun hs-cabal-arbitrary-command (project command)
   "Run an arbitrary Cabal command."
-  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
   (hs-buffer-echo-read-only project "Cabal output:\n")
   (hs-cabal-command project command))
 

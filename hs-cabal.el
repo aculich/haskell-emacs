@@ -27,11 +27,18 @@
 
 (defun hs-cabal ())
 
+(defun hs-cabal-build-interactive ()
+  "Build the current Cabal project."
+  (interactive)
+  (hs-cabal-build (hs-project)))
+
 (defun hs-cabal-build (project)
+  "Cabal build the given project."
   (hs-cabal-command project "build")
   (setf (hs-process-cmd (hs-project-process project)) 'build))
 
 (defun hs-cabal-arbitrary-command (project command)
+  "Run an arbitrary Cabal command."
   (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
   (hs-buffer-echo-read-only project "Cabal output:\n")
   (hs-cabal-command project command))

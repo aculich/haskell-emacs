@@ -1,4 +1,4 @@
-;;; hs-config.el — Elisp configurable items.
+;;; hs-tags.el — TAGS-based features.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,18 +20,19 @@
 
 ;;; Code:
 
-(defun hs-config ())
+(require 'hs-lang-en)
+(require 'hs-types)
 
-(defvar hs-config-default-project-name "haskell")
+(require 'cl)
 
-(defvar hs-config-cabal-dev-bin "/home/chris/.cabal/bin/cabal-dev")
+(defun hs-tags ())
 
-(defvar hs-config-ghci-bin "ghci")
+(defun hs-tags-generate-interactive ()
+  "Send a (silent; don't tell me about it in the REPL) arbitrary command."
+  (interactive)
+  (let ((project (hs-project)))
+   (setf (hs-process-cmd (hs-project-process project)) 'tags-generate)
+   (process-send-string (hs-process-process (hs-project-process project))
+                        (concat hs-config-tags-cmd "\n"))))
 
-(defvar hs-config-process-prompt-regex "\\(^> $\\|\n[> ]*> $\\)")
-
-(defvar hs-config-buffer-prompt "λ> ")
-
-(defvar hs-config-tags-cmd ":!find . -name '*.hs' | xargs hasktags -e -x")
-
-(provide 'hs-config)
+(provide 'hs-tags)

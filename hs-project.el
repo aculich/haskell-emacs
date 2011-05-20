@@ -36,9 +36,10 @@
    there're none."
   (if *hs-project*
       *hs-project*
-    (hs-project-switch dont-prompt)))
+    (hs-project-switch-or-create dont-prompt)))
 
-(defun hs-project-switch (&optional dont-prompt)
+(defun hs-project-switch-or-create (&optional dont-prompt)
+  "Switch the project or create one."
   (interactive)
   (let ((project
          (unless dont-prompt
@@ -79,7 +80,7 @@
                      :process nil
                      :name name
                      :cabal-dir nil
-                     :cabal-dev-dir nil
+                     :cabal-dev-dir (read-from-minibuffer "Cabal-dev dir: ")
                      :prompt-history '()))
            (process (hs-process-start project))
            (buffer (hs-buffer-create project)))

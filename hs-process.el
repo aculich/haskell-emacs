@@ -50,14 +50,16 @@
                                   :response ""
                                   :response-cursor 0
                                   :load-dirs '()
-                                  :current-dir (hs-project-cabal-dir project)
+                                  :current-dir nil
                                   :response-callback nil)))
     (setf (hs-process-process process)
           (start-process
            (hs-process-name process)
            nil
            hs-config-cabal-dev-bin
-           "ghci"))
+           "ghci"
+           "-s"
+           (hs-project-cabal-dev-dir project)))
     (set-process-filter (hs-process-process process) 'hs-process-filter)
     (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
     (process-send-string (hs-process-process process) ":set -v1\n")
@@ -108,6 +110,10 @@
                     (hs-buffer-prompt project)
                     t))
       ('load-file (progn t))
+      ('tags-generate (progn (let ((tags-revert-without-query t))
+                               (visit-tags-table (hs-process-current-dir process))
+                               (message "Tags table updated."))
+                             t))
       ('arbitrary (progn (hs-buffer-echo-read-only project
                                                    "Command finished.")
                          (message "Command finished.")
@@ -125,7 +131,7 @@
   "Trigger any updates that happen during receiving a response."
   (let ((process (hs-project-process project)))
     (case (hs-process-cmd process)
-      ('arbitrary (hs-process-trigger-arbitrary-updates process))
+      ('arbitrary (hs-process-trigger-arbitrary-updates project))
       ('load-file (hs-process-trigger-build-updates project))
       ('startup (hs-process-trigger-build-updates project))
       ('build (hs-process-trigger-build-updates project)))))
@@ -255,11 +261,12 @@
               'build)
       (hs-buffer-echo-read-only project msg))))
 
-(defun hs-process-trigger-arbitrary-updates (process)
+(defun hs-process-trigger-arbitrary-updates (project)
   "Just log out any arbitrary output."
-  (let ((new-data (substring (hs-process-response process)
+  (let ((process (hs-project-process process))
+        (new-data (substring (hs-process-response process)
                              (hs-process-response-cursor process))))
-                                        ;(hs-buffer-echo-read-only-incomplete session new-data)
+    (hs-buffer-echo-read-only-incomplete project new-data)
     (message new-data)
     (setf (hs-process-response-cursor process)
           (+ (hs-process-response-cursor process)

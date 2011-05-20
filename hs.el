@@ -27,6 +27,7 @@
 (require 'hs-faces)
 (require 'hs-buffer)
 (require 'hs-config)
+(require 'hs-cabal)
 (require 'hs-errors)
 
 (defun hs ()

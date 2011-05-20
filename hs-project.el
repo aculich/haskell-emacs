@@ -24,6 +24,12 @@
 
 (require 'cl)
 
+(defun hs-project-start (&optional name)
+  (interactive)
+  (hs)
+  (let ((project (hs-project-create)))
+    ))
+
 (defun hs-project (&optional dont-prompt)
   "Get the current project. Default if there's only one, prompt
    to choose if there're more than one, prompt to create if

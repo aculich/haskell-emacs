@@ -27,6 +27,22 @@
 
 (defun hs-process ())
 
+(defun hs-process-cd-interactive ()
+  "Change directory."
+  (interactive)
+  (let ((dir (read-from-minibuffer
+              "Directory: "
+              (or (hs-process-current-dir (hs-project-process (hs-project)))
+                  (if (buffer-file-name)
+                      (file-name-directory (buffer-file-name))
+                    "~/")))))
+    (hs-process-cd (hs-project) dir)))
+
+(defun hs-process-load-interactive ()
+  "Load the file in the current buffer."
+  (interactive)
+  (hs-process-load-file (hs-project) (buffer-file-name)))
+
 (defun hs-process-start (project)
   "Start the inferior haskell process."
   (let ((process (hs-process-make :cmd 'startup
@@ -42,13 +58,11 @@
            nil
            hs-config-cabal-dev-bin
            "ghci"))
-    (set-process-filter (hs-process-process process)
-                        'hs-process-filter)
-    (process-send-string (hs-process-process (hs-project-process project))
-                         (concat ":set prompt \"> \"\n"))
-    (process-send-string (hs-process-process (hs-project-process project))
-                         ":set -v1\n")
-    (setf (hs-project-process project) process)))
+    (set-process-filter (hs-process-process process) 'hs-process-filter)
+    (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
+    (process-send-string (hs-process-process process) ":set -v1\n")
+    (setf (hs-project-process project) process)
+    process))
 
 (defun hs-process-filter (proc response)
   "The filter for the process pipe."
@@ -269,9 +283,8 @@
 
 (defun hs-process-load-file (project &optional file)
   "Load a file."
-  (interactive)
   (if (not (hs-process-current-dir (hs-project-process project)))
-      (hs-cd)
+      (hs-process-cd-interactive)
     (let ((file-name (if file
                          file
                        (buffer-file-name))))
@@ -280,7 +293,7 @@
                            (concat ":load " file-name "\n")))))
 
 (defun hs-process-cd (project dir)
-  "Evaluate an expression."
+  "Change current directory of the REPL."
   (if (file-directory-p dir)
       (progn
         (setf (hs-process-current-dir (hs-project-process project)) dir)
@@ -291,16 +304,5 @@
         (with-current-buffer (hs-buffer-name project)
           (cd dir)))
     (error "Directory %s does not exist." dir)))
-
-(defun hs-cd ()
-  "Change directory."
-  (interactive)
-  (let ((dir (read-from-minibuffer
-              "Directory: "
-              (or (hs-process-current-dir (hs-project-process (hs-project)))
-                  (if (buffer-file-name)
-                      (file-name-directory (buffer-file-name))
-                    "~/")))))
-    (hs-process-cd (hs-project dir))))
 
 (provide 'hs-process)

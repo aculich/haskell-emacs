@@ -12,9 +12,7 @@
 * In-console completion
 * Automatic synchronization with GHCi session (via cabal-dev)
 
-# TODO
-
-## EASY / TRIVIALLY SPECIFIED
+# TODO — EASY / TRIVIALLY SPECIFIED
 
 * Projects/Sessions
   * Figuring out project from .cabal file
@@ -49,7 +47,7 @@
 * Documentation browsing
   * Ability to browse Haddock documentation inside Emacs (possibility for texinfo here)
 
-## NOT SURE / TRICKY / NONTRIVIALLY SPECIFIED
+# TODO — NOT SURE / TRICKY / NONTRIVIALLY SPECIFIED
 
 * GHCi interaction
   * Debugger tracebacks

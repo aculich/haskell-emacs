@@ -36,4 +36,14 @@
 
 (defvar hs-config-scripts '())
 
+(defvar hs-align-imports-regex
+  (concat "^\\(import[ ]+\\)"
+          "\\(qualified \\)?"
+          "[ ]*\\(\"[^\"]*\" \\)?"
+          "[ ]*\\([A-Za-z0-9_.']*\\)"
+          "[ ]*\\([ ]*as [A-Z][^ ]*\\)?"
+          "[ ]*\\((.*)\\)?"
+          "\\([ ]*hiding (.*)\\)?"
+          "\\( -- .*\\)?[ ]*$"))
+
 (provide 'hs-config)

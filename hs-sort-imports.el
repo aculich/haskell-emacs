@@ -1,23 +1,8 @@
-;; Sort the list of Haskell imports at the point alphabetically.
+;; hs-sort-imports.el — Sort the list of Haskell imports at the point alphabetically.
 ;; Copyright (C) 2010 Chris Done <chrisdone@gmail.com>
 
 ;; If the region is active it sorts the imports within the
 ;; region.
-
-;; Example usage:
-
-;; (require 'hs-sort-imports-sort-imports)
-;; (define-key hs-sort-imports-mode-map (kbd "C-c ." 'hs-sort-imports-sort-imports)
-
-;; It is particulary effective when used in conjunction with
-;; hs-sort-imports-align-imports.el, e.g.:
-
-;; (define-key hs-sort-imports-mode-map (kbd "C-c .")
-;;   (lambda ()
-;;     (interactive)
-;;     (let ((col (current-column))) ;; Save the column.
-;;       (hs-sort-imports)
-;;       (goto-char (+ (point) col))))) ;; Restore the column.
 
 ;; This will align and sort the columns of the current import
 ;; list. It's more or less the coolest thing on the planet.

@@ -12,6 +12,7 @@
 * In-console completion
 * Automatic synchronization with GHCi session (via cabal-dev)
 * Sort imports alphabetically
+* Align imports up nicely
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -30,7 +31,6 @@
   * Interactive creation/management of Cabal file
 * Source code editing
   * Jump to import list for quick editing
-  * Align imports up nicely
   * Haskell-aware code-folding
   * Type of symbol at point (non-local)
   * Documentation of symbol at point

@@ -11,6 +11,7 @@
 * Go to error/warning line and column
 * In-console completion
 * Automatic synchronization with GHCi session (via cabal-dev)
+* Sort imports alphabetically
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -30,7 +31,6 @@
 * Source code editing
   * Jump to import list for quick editing
   * Align imports up nicely
-  * Sort imports alphabetically
   * Haskell-aware code-folding
   * Type of symbol at point (non-local)
   * Documentation of symbol at point

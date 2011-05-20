@@ -29,6 +29,7 @@
 (require 'hs-config)
 (require 'hs-cabal)
 (require 'hs-errors)
+(require 'hs-sort-imports)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

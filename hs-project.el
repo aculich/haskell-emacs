@@ -75,12 +75,13 @@
   (interactive)
   (let ((name (or provided-name
                   (read-from-minibuffer (hs-lang-new-project-name)
-                                        hs-config-default-project-name))))
+                                        hs-config-default-project-name)))
+        (cabal-dir (hs-cabal-get-dir)))
     (let* ((project (hs-project-make 
                      :process nil
                      :name name
-                     :cabal-dir nil
-                     :cabal-dev-dir (read-from-minibuffer "Cabal-dev dir: ")
+                     :cabal-dir cabal-dir
+                     :cabal-dev-dir (concat cabal-dir "/cabal-dev")
                      :prompt-history '()))
            (process (hs-process-start project))
            (buffer (hs-buffer-create project)))

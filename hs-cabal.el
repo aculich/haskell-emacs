@@ -108,12 +108,6 @@
 (defun hs-cabal-find-file ()
   "Return a buffer visiting the cabal file of the current directory, or nil."
   (catch 'found
-    ;; ;; First look for it in hs-cabal-mode-buffers.
-    ;; (dolist (buf hs-cabal-mode-buffers)
-    ;;   (if (inferior-haskell-string-prefix-p
-    ;;        (with-current-buffer buf default-directory) default-directory)
-    ;;       (throw 'found buf)))
-    ;; Then look up the directory hierarchy.
     (let ((user (nth 2 (file-attributes default-directory)))
           ;; Abbreviate, so as to stop when we cross ~/.
           (root (abbreviate-file-name default-directory))
@@ -123,11 +117,29 @@
             ;; Avoid the .cabal directory.
             (dolist (file files (throw 'found nil))
               (unless (file-directory-p file)
-                (throw 'found (find-file-noselect file))))
+                (throw 'found file)))
           (if (equal root
                      (setq root (file-name-directory
                                  (directory-file-name root))))
               (setq root nil))))
       nil)))
+
+(defun hs-cabal-find-dir ()
+  "Use the .cabal file-finding function to find a dir."
+  (let ((file (hs-cabal-find-file)))
+    (when file
+      (file-name-directory file))))
+
+(defun hs-cabal-get-dir ()
+  "Get the Cabal dir for a new project. Various ways of figuring this out,
+   and indeed just prompting the user. Do them all."
+  (let* ((file (hs-cabal-find-file))
+         (dir (when file (file-name-directory file))))
+    (read-from-minibuffer
+     (format "Cabal dir%s: "
+             (if dir
+                 (format " (%s)" (file-name-nondirectory file))
+               ""))
+     (or dir default-directory))))
 
 (provide 'hs-cabal)

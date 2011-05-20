@@ -1,5 +1,6 @@
- DONE
+# DONE
 
+* Figuring out project from .cabal file
 * Named sessions
 * Collapsed/reduced error messages.
 * Multi-line expressions
@@ -18,8 +19,6 @@
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
-* Projects/Sessions
-  * Figuring out project from .cabal file
 * GHCi interaction
   * Syntax-highlighted prompt
   * Show-based value inspection

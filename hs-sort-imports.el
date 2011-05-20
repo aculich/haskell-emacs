@@ -36,7 +36,7 @@
 ;; License along with this program.  If not, see
 ;; <http://www.gnu.org/licenses/>.
 
-(defvar hs-sort-imports-sort-imports-regexp
+(defvar hs-sort-imports-regexp
   (concat "^\\(import[ ]+\\)"
           "\\(qualified \\)?"
           "[ ]*\\(\"[^\"]*\" \\)?"
@@ -45,7 +45,7 @@
 (defun hs-sort-imports ()
   "Sort the import list at the point."
   (interactive)
-  (when (hs-sort-imports-sort-imports-line-match)
+  (when (hs-sort-imports-line-match)
     (let ((current-line (buffer-substring-no-properties
                          (line-beginning-position)
                          (line-end-position)))
@@ -66,7 +66,7 @@
 (defun hs-sort-imports-sort-imports-at (begin end region)
   (save-excursion
     (sort-regexp-fields nil
-                        hs-sort-imports-sort-imports-regexp
+                        hs-sort-imports-regexp
                         "\\4"
                         begin end))
   (when (not region)
@@ -74,7 +74,7 @@
                                 (search-backward current-line))))
       (goto-char (+ line col)))))
 
-(defun hs-sort-imports-sort-imports-line-match ()
+(defun hs-sort-imports-line-match ()
   "Try to match the current line as a regexp."
   (let ((line (buffer-substring-no-properties (line-beginning-position)
                                               (line-end-position))))

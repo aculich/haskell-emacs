@@ -1,6 +1,7 @@
 ;;; hs-process.el — Interaction with the inferior process.
 
 ;; Copyright (C) 2011 Chris Done
+;; Copyright (C) 2007, 2008 Stefan Monnier
 
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as

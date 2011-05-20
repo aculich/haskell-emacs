@@ -46,4 +46,52 @@
           "\\([ ]*hiding (.*)\\)?"
           "\\( -- .*\\)?[ ]*$"))
 
+(defvar hs-completion-ghc-extensions
+  '("OverlappingInstances" "IncoherentInstances" "UndecidableInstances" "Arrows"
+    "ForeignFunctionInterface" "Generics" "ImplicitParams" "ImplicitPrelude"
+    "MonomorphismRestriction" "MonoPatBinds" "RelaxedPolyRec" "ExtendedDefaultRules"
+    "OverloadedStrings" "GADTs" "TypeFamilies" "ScopedTypeVariables" "TemplateHaskell"
+    "QuasiQuotes" "BangPatterns" "CPP" "PatternGuards" "ViewPatterns" "UnicodeSyntax"
+    "MagicHash" "NewQualifiedOperators" "PolymorphicComponents" "Rank2Types"
+    "RankNTypes" "ImpredicativeTypes" "ExistentialQuantification" "KindSignatures"
+    "EmptyDataDecls" "ParallelListComp" "TransformListComp" "UnliftedFFITypes"
+    "LiberalTypeSynonyms" "TypeOperators" "RecursiveDo" "PArr" "RecordWildCards"
+    "NamedFieldPuns" "DisambiguateRecordFields" "UnboxedTuples" "StandaloneDeriving"
+    "DeriveDataTypeable" "GeneralizedNewtypeDeriving" "TypeSynonymInstances"
+    "FlexibleContexts" "FlexibleInstances" "ConstrainedClassMethods"
+    "MultiParamTypeClasses" "FunctionalDependencies" "PackageImports"))
+
+(defvar hs-completion-prelude
+  '("not" "otherwise" "maybe" "either" "fst" "snd" "curry" "uncurry" "pred"
+    "round" "subtract" "odd" "mapM" "mapM_" "sequence" "sequence_" "=<<" "id" 
+    "const"
+    "flip" "until" "asTypeOf" "error" "undefined" "$!" "seq" "map" "++" "filter"
+    "head" "last" "tail" "init" "null" "length" "!!" "reverse" "fold" "fold1"
+    "foldr"
+    "foldr1" "and" "or" "any" "all" "sum" "product" "concat" "concatMap"
+    "maximum"
+    "minimum" "scanl" "scanl1" "scanr" "scanr1" "iterate" "repeat" "replicate"
+    "cycle" "take" "drop" "splitAt" "takeWhile" "dropWhile" "span" "break" 
+    "elem"
+    "notElem" "lookup" "zip" "zip3" "zipWith" "zipWith3" "unzip" "unzip3" 
+    "lines"
+    "words" "unlines" "unwords" "shows" "showChar" "showString" "showParen"
+    "reads"
+    "readParen" "lex" "putChar" "putStr" "putStrLn" "print" "getChar" 
+    "getLine"
+    "getContents" "intract" "FilePath" "readFile" "writeFile" "appendFile" 
+    "readIO"
+    "readLn" "IOException" "ioError" "userError" "catch"))
+
+(defvar hs-completion-prelude-types
+  '("Bool" "False" "True" "Char" "String" "IO" "IOError" "Maybe" "Just" "Nothing"
+    "Either" "Right" "Left" "Ordering" "LT" "EQ" "GT" "Integer" "Int" "Ratio" 
+    "Float" "Double" "Complex"))
+
+(defvar hs-completion-reserved-words
+  '("case" "class" "data" "default" "deriving" "do" "else" "if" "import" "in" "infix"
+    "infixl" "infixr" "instance" "let" "module" "newtype" "of" "then" "type" "where" 
+    "as"
+    "qualified" "hiding"))
+
 (provide 'hs-config)

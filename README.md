@@ -16,6 +16,7 @@
 * Align imports up nicely
 * Cabal file editing
 * Cabal-dev local-repository support
+* Language/option/keyword completion
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 

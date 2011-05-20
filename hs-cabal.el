@@ -105,4 +105,29 @@
            (hs-process-current-dir
             (hs-project-process project))))))
 
+(defun hs-cabal-find-file ()
+  "Return a buffer visiting the cabal file of the current directory, or nil."
+  (catch 'found
+    ;; ;; First look for it in hs-cabal-mode-buffers.
+    ;; (dolist (buf hs-cabal-mode-buffers)
+    ;;   (if (inferior-haskell-string-prefix-p
+    ;;        (with-current-buffer buf default-directory) default-directory)
+    ;;       (throw 'found buf)))
+    ;; Then look up the directory hierarchy.
+    (let ((user (nth 2 (file-attributes default-directory)))
+          ;; Abbreviate, so as to stop when we cross ~/.
+          (root (abbreviate-file-name default-directory))
+          files)
+      (while (and root (equal user (nth 2 (file-attributes root))))
+        (if (setq files (directory-files root 'full "\\.cabal\\'"))
+            ;; Avoid the .cabal directory.
+            (dolist (file files (throw 'found nil))
+              (unless (file-directory-p file)
+                (throw 'found (find-file-noselect file))))
+          (if (equal root
+                     (setq root (file-name-directory
+                                 (directory-file-name root))))
+              (setq root nil))))
+      nil)))
+
 (provide 'hs-cabal)

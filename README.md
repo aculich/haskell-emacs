@@ -1,4 +1,4 @@
-# DONE
+ DONE
 
 * Named sessions
 * Collapsed/reduced error messages.
@@ -13,6 +13,8 @@
 * Automatic synchronization with GHCi session (via cabal-dev)
 * Sort imports alphabetically
 * Align imports up nicely
+* Cabal file editing
+  * Cabal-dev local-repository support
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -27,7 +29,6 @@
   * Creation! (And magit integration)
   * Configuration
   * Automatic dependency inserting
-  * Cabal-dev local-repository support
   * Interactive creation/management of Cabal file
 * Source code editing
   * Jump to import list for quick editing

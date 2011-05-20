@@ -31,6 +31,7 @@
 (require 'hs-errors)
 (require 'hs-sort-imports)
 (require 'hs-align-imports)
+(require 'hs-cabal-mode)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

@@ -267,7 +267,7 @@
          (new-data (substring (hs-process-response process)
                               (hs-process-response-cursor process))))
     (hs-buffer-echo-read-only-incomplete project new-data)
-    (message new-data)
+    (mapc 'message (split-string new-data "\n"))
     (setf (hs-process-response-cursor process)
           (+ (hs-process-response-cursor process)
              (length new-data)))
@@ -311,5 +311,12 @@
         (with-current-buffer (hs-buffer-name project)
           (cd dir)))
     (error "Directory %s does not exist." dir)))
+
+(defun hs-process-arbitrary-command (project cmd)
+  "Send an arbitrary command."
+  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
+  (hs-buffer-echo-read-only project "Command output:\n")
+  (process-send-string (hs-process-process (hs-project-process project))
+                       (concat cmd "\n")))
 
 (provide 'hs-process)

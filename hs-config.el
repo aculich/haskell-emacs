@@ -34,4 +34,6 @@
 
 (defvar hs-config-tags-cmd ":!find . -name '*.hs' | xargs hasktags -e -x")
 
+(defvar hs-config-scripts '())
+
 (provide 'hs-config)

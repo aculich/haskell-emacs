@@ -41,6 +41,27 @@
     "Command: "
     (ido-completing-read "Command: " hs-cabal-commands))))
 
+(defun hs-cabal-script-interactive ()
+  (interactive)
+  (hs-process-arbitrary-command
+   (hs-project)
+   (concat
+    ":!cd "
+    (hs-project-cabal-dir (hs-project))
+    " && "
+    (read-from-minibuffer
+     "Command: "
+     (ido-completing-read "Command: " hs-config-scripts)))))
+
+(defun hs-cabal-command (project command)
+  "Send the Cabal build command."
+  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
+  (process-send-string
+   (hs-process-process (hs-project-process project))
+   (concat ":!cd " (hs-cabal-dir project)
+           " && cabal-dev " command
+           " && cd " (hs-process-current-dir (hs-project-process project)) "\n")))
+
 (defvar hs-cabal-commands
   '("install"
     "update"
@@ -73,16 +94,6 @@
   "Run an arbitrary Cabal command."
   (hs-buffer-echo-read-only project "Cabal output:\n")
   (hs-cabal-command project command))
-
-(defun hs-cabal-command (project command)
-  "Send the Cabal build command."
-  (interactive)
-  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
-  (process-send-string
-   (hs-process-process (hs-project-process project))
-   (concat ":!cd " (hs-cabal-dir project)
-           " && cabal-dev " command
-           " && cd " (hs-process-current-dir (hs-project-process project)) "\n")))
 
 (defun hs-cabal-dir (project)
   "Get the Cabal project dir."

@@ -18,6 +18,7 @@
 * Cabal-dev local-repository support
 * Language/option/keyword completion
 * Move nested blocks of code around
+* Jump to/back-from import list for quick editing
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -32,7 +33,6 @@
   * Automatic dependency inserting
   * Interactive creation/management of Cabal file
 * Source code editing
-  * Jump to import list for quick editing
   * Haskell-aware code-folding
   * Type of symbol at point (non-local)
   * Documentation of symbol at point

@@ -34,6 +34,7 @@
 (require 'hs-cabal-mode)
 (require 'hs-completion)
 (require 'hs-move-nested)
+(require 'hs-navigate-imports)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

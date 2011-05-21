@@ -36,7 +36,7 @@
   (hs-interactive-mode-welcome-message project)
   (hs-project-choose project))
 
-(defvar hs-interactive-mode
+(defvar hs-interactive-mode-map
   (let ((map (make-sparse-keymap)))
     map)
   "Interactive Haskell mode map.")

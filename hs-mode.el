@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs-mode.el — Haskell editing mode.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,27 +20,11 @@
 
 ;;; Code:
 
-(require 'hs-align-imports)
-(require 'hs-interactive-mode)
-(require 'hs-cabal)
-(require 'hs-cabal-mode)
-(require 'hs-config)
-(require 'hs-errors)
-(require 'hs-faces)
-(require 'hs-lang-en)
-(require 'hs-process)
-(require 'hs-project)
-(require 'hs-sort-imports)
-(require 'hs-tags)
 (require 'hs-types)
-(require 'hs-mode)
 
-(defun hs ()
-  "Initialize everything necessary for correct functioning."
-  (interactive)
-  (unless (default-boundp '*hs-projects*)
-    (setq *hs-projects* '()))
-  (unless (default-boundp '*hs-project*)
-    (setq *hs-project* nil)))
+(define-derived-mode hs-mode nil "Haskell" ""
+  (make-local-variable 'hs-mode)
+  (setq hs-mode t)
+  )
 
-(provide 'hs)
+(provide 'hs-mode)

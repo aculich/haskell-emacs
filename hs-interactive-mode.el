@@ -1,4 +1,4 @@
-;;; hs-buffer.el — Interactive buffer functions.
+;;; hs-interactive-mode.el — Interactive buffer functions.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -25,8 +25,16 @@
 (require 'cl)
 
 (define-derived-mode hs-interactive-mode nil "Interactive-Haskell" ""
+  (kill-all-local-variables)
   (make-local-variable 'hs-interactive-mode)
-  (setq hs-interactive-mode t))
+  (setq hs-interactive-mode t)
+  (use-local-map hs-interactive-mode-map)
+  (setq major-mode 'hs-interactive-mode)
+  (setq mode-name "Interactive-Haskell")
+  (run-mode-hooks 'hs-interactive-mode-hook)
+  (hs-interactive-mode-prompt project)
+  (hs-interactive-mode-welcome-message project)
+  (hs-project-choose project))
 
 (defvar hs-interactive-mode
   (let ((map (make-sparse-keymap)))
@@ -36,56 +44,35 @@
 (define-key hs-interactive-mode-map (kbd "RET")
   '(lambda ()
      (interactive)
-     (hs-buffer-handle-ret (hs-project))))
+     (hs-interactive-mode-handle-ret (hs-project))))
 
-;; (define-key hs-mode-map (kbd "M-p")
-;;   '(lambda ()
-;;      (interactive)
-;;      (hs-prompt-history-cycle *hs-session* 'left)))
-;; (define-key hs-mode-map (kbd "M-n")
-;;   '(lambda ()
-;;      (interactive)
-;;      (hs-prompt-history-cycle *hs-session* 'right)))
-;; (define-key hs-mode-map (kbd "C-a")
-;;   (lambda () (interactive)
-;;     (hs-prompt-goto-start *hs-session*)))
-;; (define-key hs-mode-map (kbd "\C-c\C-t")
-;;   'hs-editor-type-at-point)
-
-(defun hs-buffer-create (project)
+(defun hs-interactive-mode-create (project)
   "Make an interactive Haskell buffer."
-  (get-buffer-create (hs-buffer-name project))
-  (with-current-buffer (hs-buffer project)
-    (kill-all-local-variables)
-    (use-local-map hs-interactive-mode-map)
-    (setq major-mode 'hs-interactive-mode)
-    (setq mode-name "Interactive-Haskell")
-    (run-mode-hooks 'hs-interactive-mode-hook)
-    (hs-buffer-prompt project)
-    (hs-buffer-welcome-message project)
-    (hs-project-choose project)))
+  (get-buffer-create (hs-interactive-mode-name project))
+  (with-current-buffer (hs-interactive-mode-buffer project)
+    (hs-interactive-mode)))
 
-(defun hs-buffer (project)
+(defun hs-interactive-mode-buffer (project)
   "Get the current buffer."
-  (get-buffer (hs-buffer-name project)))
+  (get-buffer (hs-interactive-mode-name project)))
 
-(defun hs-buffer-name (project)
+(defun hs-interactive-mode-name (project)
   "Name the buffer based on project name."
   (concat "*" (hs-project-name project) "*"))
 
-(defun hs-buffer-welcome-message (project)
+(defun hs-interactive-mode-welcome-message (project)
   "Echo the welcome message."
-  (hs-buffer-echo-read-only project (hs-lang-welcome-message)))
+  (hs-interactive-mode-echo-read-only project (hs-lang-welcome-message)))
 
-(defun hs-buffer-goto-end-point ()
+(defun hs-interactive-mode-goto-end-point ()
   "Go to the 'end' of the buffer (before the prompt.)"
   (goto-char (point-max))
   (search-backward-regexp hs-config-buffer-prompt)
   (backward-char))
 
-(defun hs-buffer-prompt (project)
+(defun hs-interactive-mode-prompt (project)
   "Show a prompt at the end of the buffer."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (goto-char (point-max))
     (insert "\n")
     (insert (propertize hs-config-buffer-prompt
@@ -94,41 +81,41 @@
                         'rear-nonsticky t
                         'prompt t))))
 
-(defun hs-buffer-echo-read-only (project message)
+(defun hs-interactive-mode-echo-read-only (project message)
   "Echo a read only piece of text before the prompt."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (save-excursion
-      (hs-buffer-goto-end-point)
+      (hs-interactive-mode-goto-end-point)
       (insert (propertize (concat "\n" message)
                           'read-only t
                           'rear-nonsticky t)))))
 
-(defun hs-buffer-echo-type (project message)
+(defun hs-interactive-mode-echo-type (project message)
   "Echo a read only piece of text before the prompt."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (save-excursion
-      (hs-buffer-goto-end-point)
+      (hs-interactive-mode-goto-end-point)
       (insert (propertize (concat "\n" message)
                           'read-only t
                           'face 'hs-faces-type-result
                           'rear-nonsticky t)))))
 
-(defun hs-buffer-echo-read-only-incomplete (project message)
+(defun hs-interactive-mode-echo-read-only-incomplete (project message)
   "Echo a read only piece of text before the prompt."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (save-excursion
-      (hs-buffer-goto-end-point)
+      (hs-interactive-mode-goto-end-point)
       (insert (propertize message
                           'face 'hs-faces-ghci-result
                           'read-only t
                           'rear-nonsticky t
                           'result t)))))
 
-(defun hs-buffer-echo-error (project message)
+(defun hs-interactive-mode-echo-error (project message)
   "Echo an error message before the prompt."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (save-excursion
-      (hs-buffer-goto-end-point)
+      (hs-interactive-mode-goto-end-point)
       (insert "\n")
       (insert (propertize message
                           'face 'hs-faces-ghci-error
@@ -136,11 +123,11 @@
                           'rear-nonsticky t
                           'error t)))))
 
-(defun hs-buffer-echo-warning (project message)
+(defun hs-interactive-mode-echo-warning (project message)
   "Echo a warning message."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (save-excursion
-      (hs-buffer-goto-end-point)
+      (hs-interactive-mode-goto-end-point)
       (insert "\n")
       (insert (propertize message
                           'face 'hs-faces-ghci-warning
@@ -148,15 +135,15 @@
                           'rear-nonsticky t
                           'warning t)))))
 
-(defun hs-buffer-handle-ret (project)
+(defun hs-interactive-mode-handle-ret (project)
   "Handle the RET key in the buffer."
   (interactive)
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (if (save-excursion (search-backward-regexp hs-config-buffer-prompt
                                                 (line-beginning-position)
                                                 t
                                                 1))
-        (hs-buffer-handle project)
+        (hs-interactive-mode-handle project)
       ;; This is a cheap solution. Better is to highlight all lines
       ;; with problems in the buffers themselves; have an in-memory
       ;; mapping of latest errors.
@@ -180,7 +167,7 @@
                     (goto-line (string-to-number line))
                     (goto-char (+ (point) (string-to-number col))))))))))))
 
-(defun hs-buffer-handle (project)
+(defun hs-interactive-mode-handle (project)
   "Take input from the current prompt."
   (let ((input
          (substring (buffer-substring-no-properties
@@ -189,16 +176,16 @@
                        (search-backward-regexp hs-config-buffer-prompt))
                      (point-max))
                     (length hs-config-buffer-prompt))))
-    ;;    (hs-buffer-add-to-history project input)
+    ;;    (hs-interactive-mode-add-to-history project input)
     (hs-process-eval project
                      (replace-regexp-in-string
                       "\n"
                       " "
                       input))))
 
-(defun hs-buffer-eval-insert-result (project result)
+(defun hs-interactive-mode-eval-insert-result (project result)
   "Insert the result of an eval."
-  (with-current-buffer (hs-buffer project)
+  (with-current-buffer (hs-interactive-mode-buffer project)
     (goto-char (point-max))
     (insert "\n")
     (insert (propertize result
@@ -208,4 +195,4 @@
                         'prompt t
                         'result t))))
 
-(provide 'hs-buffer)
+(provide 'hs-interactive-mode)

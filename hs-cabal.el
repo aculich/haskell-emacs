@@ -93,7 +93,7 @@
 
 (defun hs-cabal-arbitrary-command (project command)
   "Run an arbitrary Cabal command."
-  (hs-buffer-echo-read-only
+  (hs-interactive-mode-echo-read-only
    project
    (concat (hs-lang-cabal-arbitrary-cabal-output)
            "\n"))

@@ -91,7 +91,7 @@
                      :cabal-dev-dir (concat cabal-dir "/cabal-dev")
                      :prompt-history '()))
            (process (hs-process-start project))
-           (buffer (hs-buffer-create project)))
+           (buffer (hs-interactive-mode-create project)))
       (add-to-list '*hs-projects* project)
       project)))
 

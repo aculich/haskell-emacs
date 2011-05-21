@@ -106,15 +106,15 @@
     (ecase (hs-process-cmd process)
       ('startup t)
       ('eval (progn (when (not (string= "" response))
-                      (hs-buffer-eval-insert-result project response))
-                    (hs-buffer-prompt project)
+                      (hs-interactive-mode-eval-insert-result project response))
+                    (hs-interactive-mode-prompt project)
                     t))
       ('load-file (progn t))
       ('tags-generate (progn (let ((tags-revert-without-query t))
                                (visit-tags-table (hs-process-current-dir process))
                                (message (hs-lang-tags-table-updated)))
                              t))
-      ('arbitrary (progn (hs-buffer-echo-read-only 
+      ('arbitrary (progn (hs-interactive-mode-echo-read-only 
                           project
                           (hs-lang-arbitrary-command-finished))
                          (message (hs-lang-arbitrary-command-finished))
@@ -124,7 +124,7 @@
          (setf (hs-process-response-cursor process) 0)
          (while (hs-process-trigger-type-errors-warnings project))
          (setf (hs-process-response-cursor process) cursor))
-       (hs-buffer-echo-read-only project (hs-lang-build-done))
+       (hs-interactive-mode-echo-read-only project (hs-lang-build-done))
        (message (hs-lang-build-done))
        t))))
 
@@ -152,12 +152,12 @@
        (match-string 4 (hs-process-response (hs-project-process project))))
       t)
      ((hs-process-consume project "^Preprocessing executables for \\(.+?\\)\\.\\.\\.")
-      (hs-buffer-echo-read-only
+      (hs-interactive-mode-echo-read-only
        project
        (hs-lang-build-processing-executables
         (match-string 1 (hs-process-response (hs-project-process project))))))
      ((hs-process-consume project "\nBuilding \\(.+?\\)\\.\\.\\.")
-      (hs-buffer-echo-read-only
+      (hs-interactive-mode-echo-read-only
        project
        (hs-lang-build-building
         (match-string 1 (hs-process-response (hs-project-process project))))))
@@ -165,14 +165,14 @@
       (let ((msg (hs-lang-build-linking
                   (match-string 1 (hs-process-response 
                                    (hs-project-process project))))))
-        (hs-buffer-echo-read-only project msg)
+        (hs-interactive-mode-echo-read-only project msg)
         (message msg)))
      ((hs-process-consume project "Failed, modules loaded: \\(.+\\)$")
       (let ((cursor (hs-process-response-cursor process)))
         (setf (hs-process-response-cursor process) 0)
         (while (hs-process-trigger-type-errors-warnings project))
         (setf (hs-process-response-cursor process) cursor)
-        (hs-buffer-echo-error project (hs-lang-build-compilation-failed))
+        (hs-interactive-mode-echo-error project (hs-lang-build-compilation-failed))
         (message (hs-lang-build-compilation-failed)))
       t)
      ((hs-process-consume project "Ok, modules loaded: \\(.+\\)$")
@@ -207,7 +207,7 @@
              (col (match-string 3 (hs-process-response process)))
              (warning (string-match "^Warning: " error-msg))
              (preview-msg (hs-process-preview-error-msg error-msg warning))
-             (echo (if warning #'hs-buffer-echo-warning #'hs-buffer-echo-error)))
+             (echo (if warning #'hs-interactive-mode-echo-warning #'hs-interactive-mode-echo-error)))
         (funcall echo project
                  (format "%s: %s:%s:%s: %s"
                          (hs-errors-message-type error-msg warning)
@@ -262,14 +262,14 @@
     (message msg)
     (when (eq (hs-process-cmd (hs-project-process project))
               'build)
-      (hs-buffer-echo-read-only project msg))))
+      (hs-interactive-mode-echo-read-only project msg))))
 
 (defun hs-process-trigger-arbitrary-updates (project)
   "Just log out any arbitrary output."
   (let* ((process (hs-project-process project))
          (new-data (substring (hs-process-response process)
                               (hs-process-response-cursor process))))
-    (hs-buffer-echo-read-only-incomplete project new-data)
+    (hs-interactive-mode-echo-read-only-incomplete project new-data)
     (mapc 'message (split-string new-data "\n"))
     (setf (hs-process-response-cursor process)
           (+ (hs-process-response-cursor process)
@@ -309,17 +309,17 @@
         (setf (hs-process-current-dir (hs-project-process project)) dir)
         (process-send-string (hs-process-process (hs-project-process project))
                              (concat ":cd " dir "\n"))
-        (hs-buffer-echo-read-only
+        (hs-interactive-mode-echo-read-only
          project
          (hs-lang-directory-change dir))
-        (with-current-buffer (hs-buffer-name project)
+        (with-current-buffer (hs-interactive-mode-name project)
           (cd dir)))
     (error (hs-lang-directory-does-not-exist dir))))
 
 (defun hs-process-arbitrary-command (project cmd)
   "Send an arbitrary command."
   (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
-  (hs-buffer-echo-read-only project (concat (hs-lang-command-output) "\n"))
+  (hs-interactive-mode-echo-read-only project (concat (hs-lang-command-output) "\n"))
   (process-send-string (hs-process-process (hs-project-process project))
                        (concat cmd "\n")))
 

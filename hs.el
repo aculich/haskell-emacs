@@ -20,21 +20,19 @@
 
 ;;; Code:
 
-(require 'hs-lang-en)
-(require 'hs-types)
-(require 'hs-project)
-(require 'hs-process)
-(require 'hs-faces)
-(require 'hs-buffer)
-(require 'hs-config)
-(require 'hs-cabal)
-(require 'hs-errors)
-(require 'hs-sort-imports)
 (require 'hs-align-imports)
+(require 'hs-buffer)
+(require 'hs-cabal)
 (require 'hs-cabal-mode)
-(require 'hs-completion)
-(require 'hs-move-nested)
-(require 'hs-navigate-imports)
+(require 'hs-config)
+(require 'hs-errors)
+(require 'hs-faces)
+(require 'hs-lang-en)
+(require 'hs-process)
+(require 'hs-project)
+(require 'hs-sort-imports)
+(require 'hs-tags)
+(require 'hs-types)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

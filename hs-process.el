@@ -31,7 +31,7 @@
   "Change directory."
   (interactive)
   (let ((dir (read-from-minibuffer
-              "Directory: "
+              (hs-lang-cd-directory)
               (or (hs-process-current-dir (hs-project-process (hs-project)))
                   (if (buffer-file-name)
                       (file-name-directory (buffer-file-name))
@@ -112,19 +112,20 @@
       ('load-file (progn t))
       ('tags-generate (progn (let ((tags-revert-without-query t))
                                (visit-tags-table (hs-process-current-dir process))
-                               (message "Tags table updated."))
+                               (message (hs-lang-tags-table-updated)))
                              t))
-      ('arbitrary (progn (hs-buffer-echo-read-only project
-                                                   "Command finished.")
-                         (message "Command finished.")
+      ('arbitrary (progn (hs-buffer-echo-read-only 
+                          project
+                          (hs-lang-arbitrary-command-finished))
+                         (message (hs-lang-arbitrary-command-finished))
                          t))
       ('build
        (let ((cursor (hs-process-response-cursor process)))
          (setf (hs-process-response-cursor process) 0)
          (while (hs-process-trigger-type-errors-warnings project))
          (setf (hs-process-response-cursor process) cursor))
-       (hs-buffer-echo-read-only project "Done.")
-       (message "Done.")
+       (hs-buffer-echo-read-only project (hs-lang-build-done))
+       (message (hs-lang-build-done))
        t))))
 
 (defun hs-process-live-updates (project)
@@ -153,17 +154,17 @@
      ((hs-process-consume project "^Preprocessing executables for \\(.+?\\)\\.\\.\\.")
       (hs-buffer-echo-read-only
        project
-       (format "Preprocessing: %s"
-               (match-string 1 (hs-process-response (hs-project-process project))))))
+       (hs-lang-build-processing-executables
+        (match-string 1 (hs-process-response (hs-project-process project))))))
      ((hs-process-consume project "\nBuilding \\(.+?\\)\\.\\.\\.")
       (hs-buffer-echo-read-only
        project
-       (format "Building: %s"
-               (match-string 1 (hs-process-response (hs-project-process project))))))
+       (hs-lang-build-building
+        (match-string 1 (hs-process-response (hs-project-process project))))))
      ((hs-process-consume project "Linking \\(.+?\\) \\.\\.\\.")
-      (let ((msg (format "Linking: %s"
-                         (match-string 1 (hs-process-response 
-                                          (hs-project-process project))))))
+      (let ((msg (hs-lang-build-linking
+                  (match-string 1 (hs-process-response 
+                                   (hs-project-process project))))))
         (hs-buffer-echo-read-only project msg)
         (message msg)))
      ((hs-process-consume project "Failed, modules loaded: \\(.+\\)$")
@@ -171,15 +172,15 @@
         (setf (hs-process-response-cursor process) 0)
         (while (hs-process-trigger-type-errors-warnings project))
         (setf (hs-process-response-cursor process) cursor)
-        (hs-buffer-echo-error project "Compilation failed.")
-        (message "Compilation failed."))
+        (hs-buffer-echo-error project (hs-lang-build-compilation-failed))
+        (message (hs-lang-build-compilation-failed)))
       t)
      ((hs-process-consume project "Ok, modules loaded: \\(.+\\)$")
       (let ((cursor (hs-process-response-cursor process)))
         (setf (hs-process-response-cursor process) 0)
         (while (hs-process-trigger-type-errors-warnings project))
         (setf (hs-process-response-cursor process) cursor)
-        (message "OK."))
+        (message (hs-lang-load-ok)))
       t)
      ((hs-process-consume project "Loading package \\([^ ]+\\) ... linking ... done.\n")
       (message
@@ -188,7 +189,7 @@
      ((hs-process-consume
        project
        "package flags have changed, resetting and loading new packages...")
-      (message "Package flags changed, resetting and reloading.")))))
+      (message (hs-lang-packages-flags-changed-resetting))))))
 
 (defun hs-process-trigger-type-errors-warnings (project)
   "Trigger handling type errors or warnings."
@@ -251,11 +252,13 @@
           (replace-regexp-in-string
            "\\.hs$" ""
            (replace-regexp-in-string "[\\/]" "." file-name)))
-         (msg (format "Compiling: %s%s"
-                      module-name
-                      (if (or t (string= file-name-module module-name))
-                          ""
-                        (format " [%s]" file-name)))))
+         (msg (apply
+               'hs-lang-compiling
+               (cons module-name
+                     (if (string= file-name-module module-name)
+                         nil
+                       (when hs-config-show-filename-in-load-messages
+                         (list file-name)))))))
     (message msg)
     (when (eq (hs-process-cmd (hs-project-process project))
               'build)
@@ -306,16 +309,17 @@
         (setf (hs-process-current-dir (hs-project-process project)) dir)
         (process-send-string (hs-process-process (hs-project-process project))
                              (concat ":cd " dir "\n"))
-        (hs-buffer-echo-read-only project
-                                  (format "Directory change: %s" dir))
+        (hs-buffer-echo-read-only
+         project
+         (hs-lang-directory-change dir))
         (with-current-buffer (hs-buffer-name project)
           (cd dir)))
-    (error "Directory %s does not exist." dir)))
+    (error (hs-lang-directory-does-not-exist dir))))
 
 (defun hs-process-arbitrary-command (project cmd)
   "Send an arbitrary command."
   (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
-  (hs-buffer-echo-read-only project "Command output:\n")
+  (hs-buffer-echo-read-only project (concat (hs-lang-command-output) "\n"))
   (process-send-string (hs-process-process (hs-project-process project))
                        (concat cmd "\n")))
 

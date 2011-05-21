@@ -24,7 +24,7 @@
 
 (require 'cl)
 
-(define-derived-mode hs-interactive-mode nil "Interactive Haskell" ""
+(define-derived-mode hs-interactive-mode nil "Interactive-Haskell" ""
   (make-local-variable 'hs-interactive-mode)
   (setq hs-interactive-mode t))
 
@@ -59,7 +59,7 @@
     (kill-all-local-variables)
     (use-local-map hs-interactive-mode-map)
     (setq major-mode 'hs-interactive-mode)
-    (setq mode-name "Interactive Haskell")
+    (setq mode-name "Interactive-Haskell")
     (run-mode-hooks 'hs-interactive-mode-hook)
     (hs-buffer-prompt project)
     (hs-buffer-welcome-message project)

@@ -34,4 +34,84 @@
 (defun hs-lang-welcome-message ()
   "Welcome to Haskell. Prepare your face.")
 
+(defun hs-lang-cd-directory ()
+  "Directory: ")
+
+(defun hs-lang-tags-table-updated ()
+  "Tags table updated.")
+
+(defun hs-lang-arbitrary-command-finished ()
+  "Command finished.")
+
+(defun hs-lang-build-done ()
+  "Done.")
+
+(defun hs-lang-build-processing-executables (project)
+  (format "Processing: %s" project))
+
+(defun hs-lang-build-building (project)
+  (format "Building: %s" project))
+
+(defun hs-lang-build-linking (project)
+  (format "Linking: %s" project))
+
+(defun hs-lang-build-compilation-failed ()
+  "Compilation failed.")
+
+(defun hs-lang-load-ok ()
+  "OK.")
+
+(defun hs-lang-packages-flags-changed-resetting ()
+  "Package flags changed, resetting and reloading.")
+
+(defun hs-lang-compiling (module &optional file)
+  (format "Compiling: %s%s"
+          module
+          (if file
+              (format " [%s]" file)
+            "")))
+
+(defun hs-lang-directory-change (dir)
+  (format "Directory change: %s" dir))
+
+(defun hs-lang-directory-does-not-exist (dir)
+  (format "Directory %s does not exist." dir))
+
+(defun hs-lang-command-output ()
+  "Command output:")
+
+(defun hs-lang-cabal-ido-command ()
+  "Command: ")
+
+(defun hs-lang-cabal-ido-script ()
+  "Script: ")
+
+(defun hs-lang-arbitrary-cabal-output ()
+  "Cabal output:")
+
+(defun hs-lang-cabal-project-path ()
+  "Cabal project path: ")
+
+(defun hs-lang-cabal-dir (&optional cabal-file)
+  (format "Cabal dir%s: "
+          (if cabal-file
+              (format " (%s)" (file-name-nondirectory cabal-file))
+            "")))
+
+(defun hs-lang-errors-unused () "Unused")
+(defun hs-lang-errors-missing-signature () "Signature")
+(defun hs-lang-errors-defaulting () "Defaulting")
+(defun hs-lang-errors-mismatch () "Mismatch")
+(defun hs-lang-errors-ambiguous () "Ambiguous")
+(defun hs-lang-errors-illegal () "Illegal")
+(defun hs-lang-errors-no-instance () "No instance")
+(defun hs-lang-errors-could-not-deduce () "Deduce")
+(defun hs-lang-errors-warning () "Warning")
+(defun hs-lang-errors-error () "Error")
+(defun hs-lang-errors-incomplete-do () "Incomplete `do'.")
+(defun hs-lang-errors-x-against-y (x y)
+  (format "“%s” ≠ “%s”" x y))
+(defun hs-lang-errors-x-in-y (x y)
+  (format "“%s” in “%s”" x y))
+
 (provide 'hs-lang-en)

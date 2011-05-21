@@ -39,8 +39,8 @@
   (hs-cabal-arbitrary-command
    (hs-project)
    (read-from-minibuffer 
-    "Command: "
-    (ido-completing-read "Command: " hs-cabal-commands))))
+    (hs-lang-cabal-ido-command)
+    (ido-completing-read (hs-lang-cabal-ido-command) hs-cabal-commands))))
 
 (defun hs-cabal-script-interactive ()
   (interactive)
@@ -51,8 +51,8 @@
     (hs-project-cabal-dir (hs-project))
     " && "
     (read-from-minibuffer
-     "Command: "
-     (ido-completing-read "Command: " hs-config-scripts)))))
+     (hs-lang-cabal-ido-script)
+     (ido-completing-read (hs-lang-cabal-ido-script) hs-config-scripts)))))
 
 (defun hs-cabal-command (project command)
   "Send the Cabal build command."
@@ -93,7 +93,10 @@
 
 (defun hs-cabal-arbitrary-command (project command)
   "Run an arbitrary Cabal command."
-  (hs-buffer-echo-read-only project "Cabal output:\n")
+  (hs-buffer-echo-read-only
+   project
+   (concat (hs-lang-cabal-arbitrary-cabal-output)
+           "\n"))
   (hs-cabal-command project command))
 
 (defun hs-cabal-dir (project)
@@ -102,7 +105,7 @@
       (hs-project-cabal-dir project)
     (setf (hs-project-cabal-dir project)
           (read-from-minibuffer 
-           "Cabal project path: "
+           (hs-lang-cabal-project-path)
            (hs-process-current-dir
             (hs-project-process project))))))
 
@@ -137,10 +140,7 @@
   (let* ((file (hs-cabal-find-file))
          (dir (when file (file-name-directory file))))
     (read-from-minibuffer
-     (format "Cabal dir%s: "
-             (if dir
-                 (format " (%s)" (file-name-nondirectory file))
-               ""))
+     (apply 'hs-lang-cabal-dir (when dir (list file)))
      (or dir default-directory))))
 
 (provide 'hs-cabal)

@@ -22,6 +22,8 @@
 
 (defun hs-config ())
 
+(defvar hs-config-show-filename-in-load-messages nil)
+
 (defvar hs-config-default-project-name "haskell")
 
 (defvar hs-config-cabal-dev-bin "/home/chris/.cabal/bin/cabal-dev")

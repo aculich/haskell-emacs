@@ -24,16 +24,16 @@
 
 (defun hs-errors-message-type (msg warning)
   "One-word description of the type of message."
-  (cond ((hs-errors-unused-p msg) "Unused")
-        ((hs-errors-missing-sig-p msg) "Signature")
-        ((hs-errors-defaulting-p msg) "Defaulting")
-        ((hs-errors-type-p msg) "Mismatch")
-        ((hs-errors-ambiguous-p msg) "Ambiguous")
-        ((hs-errors-illegal-instance msg) "Illegal")
-        ((hs-errors-no-instance-p msg) "No instance")
-        ((hs-errors-cant-deduce-p msg) "Deduce")
-        (warning "Warning")
-        (t "Error")))
+  (cond ((hs-errors-unused-p msg) (hs-lang-error-unused))
+        ((hs-errors-missing-sig-p msg) (hs-lang-error-missing-signature))
+        ((hs-errors-defaulting-p msg) (hs-lang-errors-defaulting))
+        ((hs-errors-type-p msg) (hs-lang-errors-mismatch))
+        ((hs-errors-ambiguous-p msg) (hs-lang-errors-ambiguous))
+        ((hs-errors-illegal-instance msg) (hs-lang-errors-illegal))
+        ((hs-errors-no-instance-p msg) (hs-lang-errors-no-instance))
+        ((hs-errors-cant-deduce-p msg) (hs-lang-errors-could-not-deduce))
+        (warning (hs-lang-errors-warning))
+        (t (hs-lang-errors-error))))
 
 (defun hs-errors-reduce-error-msg (line)
   "Remove any redundancy in error/warning messages."
@@ -44,20 +44,20 @@
         ((hs-errors-illegal-instance line)
          (format "%s" (match-string 1 line)))
         ((hs-errors-type-p line)
-         (format "“%s” ≠ “%s”"
+         (hs-lang-errors-x-against-y
                  (match-string 1 line)
                  (match-string 2 line)))
         ((or (hs-errors-cant-deduce-p line)
              (hs-errors-no-instance-p line))
-         (format "“%s” in “%s”"
+         (fhs-lang-errors-x-in-y
                  (match-string 1 line)
                  (match-string 2 line)))
         ((hs-errors-ambiguous-p line)
-         (format "“%s” in “%s”"
+         (hs-lang-errors-x-in-y
                  (match-string 2 line)
                  (match-string 3 line)))
         ((hs-errors-incomplete-do-p line)
-         "Incomplete `do'.")
+         (hs-lang-errors-incomplete-do))
         (t line)))
 
 (defun hs-errors-illegal-instance (line)

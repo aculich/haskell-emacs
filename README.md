@@ -17,6 +17,7 @@
 * Cabal file editing
 * Cabal-dev local-repository support
 * Language/option/keyword completion
+* Move nested blocks of code around
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 

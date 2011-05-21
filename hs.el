@@ -32,6 +32,8 @@
 (require 'hs-sort-imports)
 (require 'hs-align-imports)
 (require 'hs-cabal-mode)
+(require 'hs-completion)
+(require 'hs-move-nested)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

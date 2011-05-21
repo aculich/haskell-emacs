@@ -70,12 +70,19 @@
              (when (y-or-n-p (hs-lang-create-new-project name))
                (hs-project-create name)))))))))
 
+(defun hs-project-default-project-name ()
+  (or (let ((file (hs-cabal-find-file)))
+        (when file
+          (downcase (file-name-sans-extension
+                     (file-name-nondirectory file)))))
+      hs-config-default-project-name))
+
 (defun hs-project-create (&optional provided-name)
   "Create a new project, prompt for a name if requested."
   (interactive)
   (let ((name (or provided-name
                   (read-from-minibuffer (hs-lang-new-project-name)
-                                        hs-config-default-project-name)))
+                                        (hs-project-default-project-name))))
         (cabal-dir (hs-cabal-get-dir)))
     (let* ((project (hs-project-make 
                      :process nil

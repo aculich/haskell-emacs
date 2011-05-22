@@ -38,13 +38,27 @@
 
 (defvar hs-interactive-mode-map
   (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") 'hs-interactive-mode-handle-ret-interactive)
+    (define-key map (kbd "C-a") 'hs-interactive-mode-handle-start-interactive)
     map)
   "Interactive Haskell mode map.")
 
-(define-key hs-interactive-mode-map (kbd "RET")
-  '(lambda ()
-     (interactive)
-     (hs-interactive-mode-handle-ret (hs-project))))
+(defun hs-interactive-mode-handle-start-interactive ()
+  (interactive)
+  (with-current-buffer (hs-interactive-mode-buffer (hs-project))
+    (if (search-backward-regexp hs-config-buffer-prompt
+                                  (line-beginning-position)
+                                  t
+                                  1)
+      (search-forward-regexp hs-config-buffer-prompt
+                             (line-end-position)
+                             t
+                             1)
+      (move-beginning-of-line nil))))
+
+(defun hs-interactive-mode-handle-ret-interactive ()
+  (interactive)
+  (hs-interactive-mode-handle-ret (hs-project)))
 
 (defun hs-interactive-mode-create (project)
   "Make an interactive Haskell buffer."

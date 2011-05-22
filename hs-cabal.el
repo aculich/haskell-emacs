@@ -95,7 +95,7 @@
   "Run an arbitrary Cabal command."
   (hs-interactive-mode-echo-read-only
    project
-   (concat (hs-lang-cabal-arbitrary-cabal-output)
+   (concat (hs-lang-arbitrary-cabal-output)
            "\n"))
   (hs-cabal-command project command))
 

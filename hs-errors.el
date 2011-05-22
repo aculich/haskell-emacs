@@ -49,7 +49,7 @@
                  (match-string 2 line)))
         ((or (hs-errors-cant-deduce-p line)
              (hs-errors-no-instance-p line))
-         (fhs-lang-errors-x-in-y
+         (hs-lang-errors-x-in-y
                  (match-string 1 line)
                  (match-string 2 line)))
         ((hs-errors-ambiguous-p line)

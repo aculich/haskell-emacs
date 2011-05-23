@@ -22,6 +22,7 @@
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
+* Indentation that doesn't suck, including indenting/deindenting whole blocks automatically
 * GHCi interaction
   * Syntax-highlighted prompt
   * Show-based value inspection

@@ -90,4 +90,10 @@
 			  (car start-end) (cdr start-end))))
 	(newline)))))
 
+(defun hs-mode-newline-indent ()
+  "Make a newline on the current column and indent on step."
+  (interactive)
+  (hs-mode-newline-same-col)
+  (insert "  "))
+
 (provide 'hs-mode)

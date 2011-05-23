@@ -119,6 +119,8 @@
                           (hs-lang-arbitrary-command-finished))
                          (message (hs-lang-arbitrary-command-finished))
                          t))
+      ('background-arbitrary (progn (message (hs-lang-arbitrary-command-finished))
+                                    t))
       ('build
        (let ((cursor (hs-process-response-cursor process)))
          (setf (hs-process-response-cursor process) 0)
@@ -320,6 +322,12 @@
   "Send an arbitrary command."
   (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
   (hs-interactive-mode-echo-read-only project (concat (hs-lang-command-output) "\n"))
+  (process-send-string (hs-process-process (hs-project-process project))
+                       (concat cmd "\n")))
+
+(defun hs-process-background-arbitrary-command (project cmd)
+  "Send an arbitrary command (no printing in the REPL)."
+  (setf (hs-process-cmd (hs-project-process project)) 'background-arbitrary)
   (process-send-string (hs-process-process (hs-project-process project))
                        (concat cmd "\n")))
 

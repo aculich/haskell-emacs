@@ -30,7 +30,12 @@
   (setq major-mode 'hs-mode)
   (setq mode-name "Haskell")
   (set (make-local-variable 'font-lock-defaults)
-       '(hs-mode-font-lock-keywords t nil nil nil)))
+       '(hs-mode-font-lock-keywords t nil nil nil))
+  (set (make-local-variable 'comment-start) "-- ")
+  (set (make-local-variable 'comment-padding) 0)
+  (set (make-local-variable 'comment-start-skip) "[-{]-[ \t]*")
+  (set (make-local-variable 'comment-end) "")
+  (set (make-local-variable 'comment-end-skip) "[ \t]*\\(-}\\|\\s>\\)"))
 
 (defvar hs-mode-font-lock-keywords
   `(;; Comments
@@ -66,5 +71,22 @@
   (let ((map (make-sparse-keymap)))
     map)
   "Haskell mode map.")
+
+(defun hs-mode-newline-same-col ()
+  "Make a newline and go to the same column as the current line."
+  (interactive)
+  (let ((point (point)))
+    (let ((start-end
+	   (save-excursion
+	     (let* ((start (line-beginning-position))
+		    (end (progn (goto-char start)
+				(search-forward-regexp
+				 "[^ ]" (line-end-position) t 1))))
+	       (when end (cons start (1- end)))))))
+      (if start-end
+	  (progn (newline)
+		 (insert (buffer-substring-no-properties
+			  (car start-end) (cdr start-end))))
+	(newline)))))
 
 (provide 'hs-mode)

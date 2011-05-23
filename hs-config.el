@@ -26,7 +26,9 @@
 
 (defvar hs-config-default-project-name "haskell")
 
-(defvar hs-config-cabal-dev-bin "/home/chris/.cabal/bin/cabal-dev")
+(defvar hs-config-cabal-bin-dir "~/.cabal/bin")
+
+(defvar hs-config-cabal-dev-bin (expand-file-name "cabal-dev" hs-config-cabal-bin-dir))
 
 (defvar hs-config-ghci-bin "ghci")
 

@@ -31,6 +31,7 @@
 (require 'hs-process)
 (require 'hs-project)
 (require 'hs-sort-imports)
+(require 'hs-move-nested)
 (require 'hs-tags)
 (require 'hs-types)
 (require 'hs-mode)

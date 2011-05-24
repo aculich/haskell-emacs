@@ -24,18 +24,6 @@
 
 (require 'cl)
 
-(define-derived-mode hs-interactive-mode nil "Interactive-Haskell" ""
-  (kill-all-local-variables)
-  (make-local-variable 'hs-interactive-mode)
-  (setq hs-interactive-mode t)
-  (use-local-map hs-interactive-mode-map)
-  (setq major-mode 'hs-interactive-mode)
-  (setq mode-name "Interactive-Haskell")
-  (run-mode-hooks 'hs-interactive-mode-hook)
-  (hs-interactive-mode-prompt project)
-  (hs-interactive-mode-welcome-message project)
-  (hs-project-choose project))
-
 (defvar hs-interactive-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "RET") 'hs-interactive-mode-handle-ret-interactive)
@@ -43,17 +31,29 @@
     map)
   "Interactive Haskell mode map.")
 
+(define-derived-mode hs-interactive-mode nil "Interactive-Haskell" ""
+  (kill-all-local-variables)
+  (make-local-variable 'hs-interactive-mode)
+  (setq hs-interactive-mode t)
+  (setq major-mode 'hs-interactive-mode)
+  (setq mode-name "Interactive-Haskell")
+  (run-mode-hooks 'hs-interactive-mode-hook)
+  (hs-interactive-mode-prompt project)
+  (hs-interactive-mode-welcome-message project)
+  (hs-project-choose project)
+  (use-local-map hs-interactive-mode-map))
+
 (defun hs-interactive-mode-handle-start-interactive ()
   (interactive)
   (with-current-buffer (hs-interactive-mode-buffer (hs-project))
     (if (search-backward-regexp hs-config-buffer-prompt
-                                  (line-beginning-position)
-                                  t
-                                  1)
-      (search-forward-regexp hs-config-buffer-prompt
-                             (line-end-position)
-                             t
-                             1)
+                                (line-beginning-position)
+                                t
+                                1)
+        (search-forward-regexp hs-config-buffer-prompt
+                               (line-end-position)
+                               t
+                               1)
       (move-beginning-of-line nil))))
 
 (defun hs-interactive-mode-handle-ret-interactive ()

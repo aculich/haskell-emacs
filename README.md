@@ -1,3 +1,5 @@
+See the issue tracker for upcoming features and bugs.
+
 # DONE
 
 * Figuring out project from .cabal file

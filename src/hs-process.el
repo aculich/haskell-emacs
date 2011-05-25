@@ -121,8 +121,9 @@
                     t))
       ('load-file (progn t))
       ('tags-generate (progn (let ((tags-revert-without-query t))
-                               (visit-tags-table (hs-process-current-dir process))
-                               (hs-message-line (hs-lang-tags-table-updated)))
+                               (when (hs-process-current-dir process)
+                                   (visit-tags-table (hs-process-current-dir process))
+                                (hs-message-line (hs-lang-tags-table-updated))))
                              t))
       ('arbitrary (progn (hs-interactive-mode-echo-read-only 
                           project

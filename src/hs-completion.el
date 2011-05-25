@@ -27,6 +27,7 @@
      . (lambda ()
          (all-completions ac-target
                           (append nil
+                                  hs-completion-ghc-warning-options
                                   hs-completion-ghc-extensions
                                   hs-completion-prelude
                                   hs-completion-prelude-types

@@ -65,6 +65,25 @@
     "FlexibleContexts" "FlexibleInstances" "ConstrainedClassMethods"
     "MultiParamTypeClasses" "FunctionalDependencies" "PackageImports"))
 
+(defvar hs-completion-ghc-warning-options
+  '("-W" "-w" "-w" "-Wall" "-w" "-Werror" "-Wwarn" "-fwarn-unrecognised-pragmas" 
+    "-fno-warn-unrecognised-pragmas" "-fwarn-warnings-deprecations"
+    "-fno-warn-warnings-deprecations" "-fwarn-deprecated-flags" "-fno-warn-deprecated-flags" 
+    "-fwarn-duplicate-exports" "-fno-warn-duplicate-exports" "-fwarn-hi-shadowing" 
+    "-fno-warn-hi-shadowing" "-fwarn-implicit-prelude" "-fno-warn-implicit-prelude" 
+    "-fwarn-incomplete-patterns" "-fno-warn-incomplete-patterns" 
+    "-fwarn-incomplete-record-updates" "-fno-warn-incomplete-record-updates" 
+    "-fwarn-missing-fields" "-fno-warn-missing-fields" "-fwarn-missing-methods" 
+    "-fno-warn-missing-methods" "-fwarn-missing-signatures" "-fno-warn-missing-signatures" 
+    "-fwarn-name-shadowing" "-fno-warn-name-shadowing" "-fwarn-orphans" "-fno-warn-orphans"
+    "-fwarn-overlapping-patterns" "-fno-warn-overlapping-patterns" "-fwarn-simple-patterns"
+    "-fno-warn-simple-patterns" "-fwarn-tabs" "-fno-warn-tabs" "-fwarn-type-defaults" 
+    "-fno-warn-type-defaults" "-fwarn-monomorphism-restriction" 
+    "-fno-warn-monomorphism-restriction" "-fwarn-unused-binds" "-fno-warn-unused-binds" 
+    "-fwarn-unused-imports" "-fno-warn-unused-imports" "-fwarn-unused-matches" 
+    "-fno-warn-unused-matches" "-fwarn-unused-do-bind" "-fno-warn-unused-do-bind" 
+    "-fwarn-wrong-do-bind" "-fno-warn-wrong-do-bind"))
+
 (defvar hs-completion-prelude
   '("not" "otherwise" "maybe" "either" "fst" "snd" "curry" "uncurry" "pred"
     "round" "subtract" "odd" "mapM" "mapM_" "sequence" "sequence_" "=<<" "id" 

@@ -36,6 +36,8 @@
   (set (make-local-variable 'comment-start-skip) "[-{]-[ \t]*")
   (set (make-local-variable 'comment-end) "")
   (set (make-local-variable 'comment-end-skip) "[ \t]*\\(-}\\|\\s>\\)")
+  (hs-tags-generate-interactive)
+  (hs-completion)
   (run-mode-hooks))
 
 (defvar hs-mode-font-lock-keywords

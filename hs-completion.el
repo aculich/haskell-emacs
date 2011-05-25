@@ -20,15 +20,24 @@
 
 ;;; Code:
 
+(require 'auto-complete)
+
 (defvar hs-completion-ac-source
-      '((candidates
-         . (lambda ()
-             (all-completions ac-target
-                              (append nil
-                                      hs-completion-ghc-extensions
-                                      hs-completion-prelude
-                                      hs-completion-prelude-types
-                                      hs-completion-reserved-words))))))
-(defun hs-completion ())
+  '((candidates
+     . (lambda ()
+         (all-completions ac-target
+                          (append nil
+                                  hs-completion-ghc-extensions
+                                  hs-completion-prelude
+                                  hs-completion-prelude-types
+                                  hs-completion-reserved-words))))))
+(defun hs-completion ()
+  (interactive)
+  (make-local-variable 'ac-sources)
+  (setq ac-sources '(ac-source-etags
+                     ac-source-words-in-buffer
+                     ac-source-abbrev
+                     hs-completion-ac-source))
+  (auto-complete-mode t))
 
 (provide 'hs-completion)

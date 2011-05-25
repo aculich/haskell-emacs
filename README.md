@@ -1,5 +1,18 @@
 See the issue tracker for upcoming features and bugs.
 
+# QUICK START
+
+    (add-to-list 'load-path "~/Emacs/ot/auto-complete")
+    (add-to-list 'load-path "~/Emacs/me/hs/src")
+    (add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
+    (add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
+
+See examples/bindings.el for example bindings to use. Most of these
+will become default eventually.
+
+I will include auto-complete and auto-complete-etags.el (and any other
+dependencies) in the distribution in future.
+
 # DONE
 
 * Figuring out project from .cabal file

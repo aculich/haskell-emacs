@@ -43,6 +43,11 @@
   (interactive)
   (hs-process-load-file (hs-project) (buffer-file-name)))
 
+(defun hs-process-type-of-interactive ()
+  "Get the type of something interactively."
+  (interactive)
+  (hs-process-type-of (hs-project) (hs-ident-at-point)))
+
 (defun hs-process-start (project)
   "Start the inferior haskell process."
   (let ((process (hs-process-make :cmd 'startup
@@ -121,6 +126,9 @@
                          t))
       ('background-arbitrary (progn (message (hs-lang-arbitrary-command-finished))
                                     t))
+      ('type-of (progn (message response)
+                       (hs-interactive-mode-echo-type project response)
+                       t))
       ('build
        (let ((cursor (hs-process-response-cursor process)))
          (setf (hs-process-response-cursor process) 0)
@@ -330,5 +338,11 @@
   (setf (hs-process-cmd (hs-project-process project)) 'background-arbitrary)
   (process-send-string (hs-process-process (hs-project-process project))
                        (concat cmd "\n")))
+
+(defun hs-process-type-of (project symbol)
+  "Send an arbitrary command (no printing in the REPL)."
+  (setf (hs-process-cmd (hs-project-process project)) 'type-of)
+  (process-send-string (hs-process-process (hs-project-process project))
+                       (concat ":t " symbol "\n")))
 
 (provide 'hs-process)

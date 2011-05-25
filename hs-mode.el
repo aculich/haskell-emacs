@@ -1,6 +1,8 @@
 ;;; hs-mode.el — Haskell editing mode.
 
 ;; Copyright (C) 2011 Chris Done
+;; Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008  Free Software Foundation, Inc
+;; Copyright (C) 1992, 1997-1998 Simon Marlow, Graeme E Moss, and Tommy Thorn
 
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -97,5 +99,41 @@
   (interactive)
   (hs-mode-newline-same-col)
   (insert "  "))
+
+(defun hs-ident-at-point ()
+  "Return the identifier under point, or nil if none found.
+May return a qualified name."
+  (save-excursion
+    (let ((case-fold-search nil))
+      (multiple-value-bind (start end)
+          (if (looking-at "\\s_")
+              (values (progn (skip-syntax-backward "_") (point))
+                      (progn (skip-syntax-forward "_") (point)))
+            (values
+             (progn (skip-syntax-backward "w'")
+                    (skip-syntax-forward "'") (point))
+             (progn (skip-syntax-forward "w'") (point))))
+        ;; If we're looking at a module ID that qualifies further IDs, add
+        ;; those IDs.
+        (goto-char start)
+        (while (and (looking-at "[[:upper:]]") (eq (char-after end) ?.)
+                    ;; It's a module ID that qualifies further IDs.
+                    (goto-char (1+ end))
+                    (save-excursion
+                      (when (not (zerop (skip-syntax-forward
+                                         (if (looking-at "\\s_") "_" "w'"))))
+                        (setq end (point))))))
+        ;; If we're looking at an ID that's itself qualified by previous
+        ;; module IDs, add those too.
+        (goto-char start)
+        (if (eq (char-after) ?.) (forward-char 1)) ;Special case for "."
+        (while (and (eq (char-before) ?.)
+                    (progn (forward-char -1)
+                           (not (zerop (skip-syntax-backward "w'"))))
+                    (skip-syntax-forward "'")
+                    (looking-at "[[:upper:]]"))
+          (setq start (point)))
+        ;; This is it.
+        (buffer-substring-no-properties start end)))))
 
 (provide 'hs-mode)

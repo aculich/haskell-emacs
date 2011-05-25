@@ -1,4 +1,8 @@
-See the issue tracker for upcoming features and bugs.
+# ALPHA — don't try to use!
+
+I'm still working on it. See the issue tracker for upcoming features
+and bugs. Please wait until test-cases (see “Complete unit testing”
+milestone) have been written before contributing patches.
 
 # QUICK START
 

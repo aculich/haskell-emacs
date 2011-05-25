@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs-string.el — String functions.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,31 +20,19 @@
 
 ;;; Code:
 
-(require 'hs-ui)
-(require 'hs-align-imports)
-(require 'hs-interactive-mode)
-(require 'hs-cabal)
-(require 'hs-cabal-mode)
-(require 'hs-config)
-(require 'hs-errors)
-(require 'hs-faces)
-(require 'hs-lang-en)
-(require 'hs-process)
-(require 'hs-project)
-(require 'hs-sort-imports)
-(require 'hs-navigate-imports)
-(require 'hs-move-nested)
-(require 'hs-completion)
-(require 'hs-tags)
-(require 'hs-types)
-(require 'hs-mode)
+(defun hs-string ())
 
-(defun hs ()
-  "Initialize everything necessary for correct functioning."
-  (interactive)
-  (unless (default-boundp '*hs-projects*)
-    (setq *hs-projects* '()))
-  (unless (default-boundp '*hs-project*)
-    (setq *hs-project* nil)))
+(defun hs-trim (string)
+  (replace-regexp-in-string
+   "^[ \t\n]+" ""
+   (replace-regexp-in-string
+    "[ \t\n]+$" ""
+    string)))
 
-(provide 'hs)
+(defun hs-string-take (string n)
+  "Take n chars from string."
+  (substring string
+             0
+             (min (length string) n)))
+
+(provide 'hs-string)

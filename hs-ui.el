@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs-process.el — UI procedures.
 
 ;; Copyright (C) 2011 Chris Done
 
@@ -20,31 +20,18 @@
 
 ;;; Code:
 
-(require 'hs-ui)
-(require 'hs-align-imports)
-(require 'hs-interactive-mode)
-(require 'hs-cabal)
-(require 'hs-cabal-mode)
-(require 'hs-config)
-(require 'hs-errors)
-(require 'hs-faces)
-(require 'hs-lang-en)
-(require 'hs-process)
-(require 'hs-project)
-(require 'hs-sort-imports)
-(require 'hs-navigate-imports)
-(require 'hs-move-nested)
-(require 'hs-completion)
-(require 'hs-tags)
 (require 'hs-types)
-(require 'hs-mode)
+(require 'hs-string)
 
-(defun hs ()
-  "Initialize everything necessary for correct functioning."
-  (interactive)
-  (unless (default-boundp '*hs-projects*)
-    (setq *hs-projects* '()))
-  (unless (default-boundp '*hs-project*)
-    (setq *hs-project* nil)))
+(defun hs-ui ())
 
-(provide 'hs)
+(defun hs-message-line (str)
+  "Message only one line, multiple lines just disturbs the programmer."
+  (let ((lines (split-string str "\n" t)))
+    (when (and (car lines) (stringp (car lines)))
+      (message (concat (car lines)
+                       (if (and (cdr lines) (stringp (cadr lines)))
+                           (format " [ %s … ]" (hs-string-take (hs-trim (cadr lines)) 10))
+                           ""))))))
+
+(provide 'hs-ui)

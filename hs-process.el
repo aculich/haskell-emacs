@@ -48,6 +48,11 @@
   (interactive)
   (hs-process-type-of (hs-project) (hs-ident-at-point)))
 
+(defun hs-process-info-of-interactive ()
+  "Get the info of something interactively."
+  (interactive)
+  (hs-process-info-of (hs-project) (hs-ident-at-point)))
+
 (defun hs-process-start (project)
   "Start the inferior haskell process."
   (let ((process (hs-process-make :cmd 'startup
@@ -117,16 +122,19 @@
       ('load-file (progn t))
       ('tags-generate (progn (let ((tags-revert-without-query t))
                                (visit-tags-table (hs-process-current-dir process))
-                               (message (hs-lang-tags-table-updated)))
+                               (hs-message-line (hs-lang-tags-table-updated)))
                              t))
       ('arbitrary (progn (hs-interactive-mode-echo-read-only 
                           project
                           (hs-lang-arbitrary-command-finished))
-                         (message (hs-lang-arbitrary-command-finished))
+                         (hs-message-line (hs-lang-arbitrary-command-finished))
                          t))
-      ('background-arbitrary (progn (message (hs-lang-arbitrary-command-finished))
+      ('background-arbitrary (progn (hs-message-line (hs-lang-arbitrary-command-finished))
                                     t))
-      ('type-of (progn (message response)
+      ('type-of (progn (hs-message-line response)
+                       (hs-interactive-mode-echo-type project response)
+                       t))
+      ('info-of (progn (hs-message-line response)
                        (hs-interactive-mode-echo-type project response)
                        t))
       ('build
@@ -135,7 +143,7 @@
          (while (hs-process-trigger-type-errors-warnings project))
          (setf (hs-process-response-cursor process) cursor))
        (hs-interactive-mode-echo-read-only project (hs-lang-build-done))
-       (message (hs-lang-build-done))
+       (hs-message-line (hs-lang-build-done))
        t))))
 
 (defun hs-process-live-updates (project)
@@ -176,30 +184,30 @@
                   (match-string 1 (hs-process-response 
                                    (hs-project-process project))))))
         (hs-interactive-mode-echo-read-only project msg)
-        (message msg)))
+        (hs-message-line msg)))
      ((hs-process-consume project "Failed, modules loaded: \\(.+\\)$")
       (let ((cursor (hs-process-response-cursor process)))
         (setf (hs-process-response-cursor process) 0)
         (while (hs-process-trigger-type-errors-warnings project))
         (setf (hs-process-response-cursor process) cursor)
         (hs-interactive-mode-echo-error project (hs-lang-build-compilation-failed))
-        (message (hs-lang-build-compilation-failed)))
+        (hs-message-line (hs-lang-build-compilation-failed)))
       t)
      ((hs-process-consume project "Ok, modules loaded: \\(.+\\)$")
       (let ((cursor (hs-process-response-cursor process)))
         (setf (hs-process-response-cursor process) 0)
         (while (hs-process-trigger-type-errors-warnings project))
         (setf (hs-process-response-cursor process) cursor)
-        (message (hs-lang-load-ok)))
+        (hs-message-line (hs-lang-load-ok)))
       t)
      ((hs-process-consume project "Loading package \\([^ ]+\\) ... linking ... done.\n")
-      (message
+      (hs-message-line
        (format "Loading: %s"
                (match-string 1 (hs-process-response (hs-project-process project))))))
      ((hs-process-consume
        project
        "package flags have changed, resetting and loading new packages...")
-      (message (hs-lang-packages-flags-changed-resetting))))))
+      (hs-message-line (hs-lang-packages-flags-changed-resetting))))))
 
 (defun hs-process-trigger-type-errors-warnings (project)
   "Trigger handling type errors or warnings."
@@ -269,7 +277,7 @@
                          nil
                        (when hs-config-show-filename-in-load-messages
                          (list file-name)))))))
-    (message msg)
+    (hs-message-line msg)
     (when (eq (hs-process-cmd (hs-project-process project))
               'build)
       (hs-interactive-mode-echo-read-only project msg))))
@@ -344,5 +352,11 @@
   (setf (hs-process-cmd (hs-project-process project)) 'type-of)
   (process-send-string (hs-process-process (hs-project-process project))
                        (concat ":t " symbol "\n")))
+
+(defun hs-process-info-of (project symbol)
+  "Send an arbitrary command (no printing in the REPL)."
+  (setf (hs-process-cmd (hs-project-process project)) 'info-of)
+  (process-send-string (hs-process-process (hs-project-process project))
+                       (concat ":i " symbol "\n")))
 
 (provide 'hs-process)

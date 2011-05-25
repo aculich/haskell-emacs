@@ -1,6 +1,9 @@
 ;;; hs-mode.el — Haskell editing mode.
 
 ;; Copyright (C) 2011 Chris Done
+
+;; For parts taken from haskell-mode:
+
 ;; Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008  Free Software Foundation, Inc
 ;; Copyright (C) 1992, 1997-1998 Simon Marlow, Graeme E Moss, and Tommy Thorn
 
@@ -100,6 +103,7 @@
   (hs-mode-newline-same-col)
   (insert "  "))
 
+;; Taken from haskell-mode.
 (defun hs-ident-at-point ()
   "Return the identifier under point, or nil if none found.
 May return a qualified name."

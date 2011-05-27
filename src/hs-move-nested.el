@@ -34,11 +34,11 @@
 
 (defun hs-move-nested (columns)
   (save-excursion
-    (let ((region (haskell-nested-region)))
+    (let ((region (hs-move-nested-region)))
       (when region
         (indent-rigidly (car region) (cdr region) columns)))))
 
-(defun haskell-nested-region ()
+(defun hs-move-nested-region ()
   (save-excursion
     (let ((starting-level (current-column)))
       (forward-line)
@@ -56,11 +56,13 @@
                                 start-end-point)))))))
 
 (defun hs-move-nested-indent-level ()
-  (1- (length
-       (buffer-substring-no-properties
-        (line-beginning-position)
-        (or (save-excursion (goto-char (line-beginning-position))
-                            (search-forward-regexp "[^ ]" (line-end-position) t 1))
-            (line-beginning-position))))))
+  (max 
+   0 
+   (1- (length
+        (buffer-substring-no-properties
+         (line-beginning-position)
+         (or (save-excursion (goto-char (line-beginning-position))
+                             (search-forward-regexp "[^ ]" (line-end-position) t 1))
+             (line-beginning-position)))))))
 
 (provide 'hs-move-nested)

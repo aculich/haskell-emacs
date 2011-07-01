@@ -27,7 +27,13 @@
 (defvar hs-interactive-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "RET") 'hs-interactive-mode-handle-ret-interactive)
+    (define-key map (kbd "C-j") 'hs-interactive-mode-newline-indent)
     (define-key map (kbd "C-a") 'hs-interactive-mode-handle-start-interactive)
+    (define-key map (kbd "C-c C-k") 'hs-interactive-mode-clear)
+    (define-key map (kbd "M-p")
+      '(lambda () (interactive) (hs-interactive-mode-history-toggle -1)))
+    (define-key map (kbd "M-n")
+      '(lambda () (interactive) (hs-interactive-mode-history-toggle 1)))
     map)
   "Interactive Haskell mode map.")
 
@@ -38,10 +44,14 @@
   (setq major-mode 'hs-interactive-mode)
   (setq mode-name "Interactive-Haskell")
   (run-mode-hooks 'hs-interactive-mode-hook)
-  (hs-interactive-mode-prompt project)
-  (hs-interactive-mode-welcome-message project)
-  (hs-project-choose project)
-  (use-local-map hs-interactive-mode-map))
+  (hs-interactive-mode-prompt (hs-project))
+  (hs-interactive-mode-welcome-message (hs-project))
+  (hs-project-choose (hs-project))
+  (use-local-map hs-interactive-mode-map)
+  (make-local-variable 'hs-interactive-mode-history)
+  (make-local-variable 'hs-interactive-mode-history-index)
+  (setq hs-interactive-mode-history '())
+  (setq hs-interactive-mode-history-index 0))
 
 (defun hs-interactive-mode-handle-start-interactive ()
   (interactive)
@@ -154,7 +164,7 @@
   (interactive)
   (with-current-buffer (hs-interactive-mode-buffer project)
     (if (save-excursion (search-backward-regexp hs-config-buffer-prompt
-                                                (line-beginning-position)
+                                                nil
                                                 t
                                                 1))
         (hs-interactive-mode-handle project)
@@ -176,6 +186,7 @@
                                   ((file-exists-p src-relative-file) 
                                    src-relative-file))))
                   (when file
+                    (goto-char (point-max))
                     (other-window 1)
                     (find-file file)
                     (goto-line (string-to-number line))
@@ -190,12 +201,13 @@
                        (search-backward-regexp hs-config-buffer-prompt))
                      (point-max))
                     (length hs-config-buffer-prompt))))
-    ;;    (hs-interactive-mode-add-to-history project input)
-    (hs-process-eval project
-                     (replace-regexp-in-string
-                      "\n"
-                      " "
-                      input))))
+    (unless (string= input "")
+      (hs-interactive-mode-history-add input)
+      (hs-process-eval project
+                       (replace-regexp-in-string
+                        "\n"
+                        " "
+                        input)))))
 
 (defun hs-interactive-mode-eval-insert-result (project result)
   "Insert the result of an eval."
@@ -208,5 +220,38 @@
                         'rear-nonsticky t
                         'prompt t
                         'result t))))
+
+(defun hs-interactive-mode-history-toggle (n)
+  "Toggle the history n items up or down."
+  (unless (null hs-interactive-mode-history)
+    (hs-interactive-mode-set-prompt
+     "x")))
+
+(defun hs-interactive-mode-history-add (input)
+  "Add item to the history."
+  )
+
+(defun hs-interactive-mode-set-prompt (p)
+  "Set (and overwrite) the current prompt."
+  (with-current-buffer (hs-interactive-mode-buffer (hs-project))
+    (goto-char (point-max))
+    (goto-char (line-beginning-position))
+    (search-forward-regexp hs-config-buffer-prompt)
+    (delete-region (point)
+                   (line-end-position))
+    (insert p)))
+
+(defun hs-interactive-mode-newline-indent ()
+  "Newline and indent at the prompt."
+  (interactive)
+  (insert "\n   "))
+
+(defun hs-interactive-mode-clear ()
+  "Newline and indent at the prompt."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (set-text-properties (point-min) (point-max) nil))
+  (delete-region (point-min) (point-max))
+  (hs-interactive-mode-prompt (hs-project)))
 
 (provide 'hs-interactive-mode)

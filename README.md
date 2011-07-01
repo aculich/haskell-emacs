@@ -38,6 +38,7 @@ dependencies) in the distribution in future.
 * Language/option/keyword completion
 * Move nested blocks of code around
 * Jump to/back-from import list for quick editing
+* Type of symbol at point (non-local)
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -54,7 +55,6 @@ dependencies) in the distribution in future.
   * Interactive creation/management of Cabal file
 * Source code editing
   * Haskell-aware code-folding
-  * Type of symbol at point (non-local)
   * Documentation of symbol at point
 * Module import-export awareness
   * Completion based on:

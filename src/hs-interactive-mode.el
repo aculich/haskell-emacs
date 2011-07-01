@@ -162,17 +162,19 @@
 (defun hs-interactive-mode-handle-ret (project)
   "Handle the RET key in the buffer."
   (interactive)
-  (with-current-buffer (hs-interactive-mode-buffer project)
-    (if (save-excursion (search-backward-regexp hs-config-buffer-prompt
-                                                nil
-                                                t
-                                                1))
-        (hs-interactive-mode-handle project)
-      ;; This is a cheap solution. Better is to highlight all lines
-      ;; with problems in the buffers themselves; have an in-memory
-      ;; mapping of latest errors.
-      (let ((line (buffer-substring-no-properties (line-beginning-position)
-                                                  (line-end-position))))
+  (let ((line (buffer-substring-no-properties (line-beginning-position)
+                                              (line-end-position))))
+    (with-current-buffer (hs-interactive-mode-buffer project)
+      (if (and (not (string-match "^[^:]+: \\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\):" line))
+               (save-excursion (search-backward-regexp hs-config-buffer-prompt
+                                                       nil
+                                                       t
+                                                       1)))
+          (hs-interactive-mode-handle project)
+        ;; This is a cheap solution. Better is to highlight all lines
+        ;; with problems in the buffers themselves; have an in-memory
+        ;; mapping of latest errors.
+
         (if (string-match "^[^:]+: \\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\):" line)
             (let ((file (match-string 1 line))
                   (line (match-string 2 line))

@@ -225,11 +225,19 @@
   "Toggle the history n items up or down."
   (unless (null hs-interactive-mode-history)
     (hs-interactive-mode-set-prompt
-     "x")))
+     (nth hs-interactive-mode-history-index
+          hs-interactive-mode-history))
+    (setq hs-interactive-mode-history-index
+          (mod (+ n hs-interactive-mode-history-index)
+               (length hs-interactive-mode-history)))))
 
 (defun hs-interactive-mode-history-add (input)
   "Add item to the history."
-  )
+  (setq hs-interactive-mode-history
+        (cons input
+              (remove-if (lambda (i) (string= i input))
+                         hs-interactive-mode-history)))
+  (setq hs-interactive-mode-history-index 0))
 
 (defun hs-interactive-mode-set-prompt (p)
   "Set (and overwrite) the current prompt."

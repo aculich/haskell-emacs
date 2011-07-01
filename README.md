@@ -39,6 +39,7 @@ dependencies) in the distribution in future.
 * Move nested blocks of code around
 * Jump to/back-from import list for quick editing
 * Type of symbol at point (non-local)
+* Type error handling (in REPL, brings up an error buffer)
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -46,7 +47,6 @@ dependencies) in the distribution in future.
 * GHCi interaction
   * Syntax-highlighted prompt
   * Show-based value inspection
-  * Type error handling
   * Module awareness
 * Cabal integration
   * Creation! (And magit integration)

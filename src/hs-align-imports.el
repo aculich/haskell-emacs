@@ -143,7 +143,7 @@
   "Try to match the current line as a regexp."
   (let ((line (buffer-substring-no-properties (line-beginning-position)
                                               (line-end-position))))
-    (if (string-match *haskell-import-line-regexp* line)
+    (if (string-match hs-align-imports-regex line)
         line
       nil)))
 

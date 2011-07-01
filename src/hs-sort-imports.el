@@ -71,7 +71,7 @@
   "Skip a bunch of consequtive import lines up/down."
   (while (not (or (equal (point)
                          (point-max))
-                  (not (hs-sort-imports-sort-imports-line-match))))
+                  (not (hs-sort-imports-line-match))))
     (funcall direction)))
 
 (provide 'hs-sort-imports)

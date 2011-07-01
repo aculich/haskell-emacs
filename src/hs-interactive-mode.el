@@ -279,11 +279,33 @@
                         'read-only t
                         'rear-nonsticky t
                         'error t))
+    (let* ((cols (string-match "<interactive>:[0-9]+:\\([0-9]+\\)\-?\\([0-9]*\\)"
+                               msg))
+           (col-start (when cols (string-to-number (match-string 1 msg))))
+           (col-end (when cols (max (1+ (string-to-number (match-string 2 msg)))
+                                    col-start))))
+      (when cols
+        (with-current-buffer current
+          (let ((point-start (save-excursion
+                               (goto-char (point-max))
+                               (goto-char (line-beginning-position))
+                               (search-forward-regexp hs-config-buffer-prompt))))
+            (add-text-properties (+ point-start col-start)
+                                 (+ point-start col-end)
+                                 '(face hs-faces-ghci-error))))))
     (define-key map (kbd "q")
       (lambda ()
         (interactive)
         (kill-buffer)
-        (switch-to-buffer-other-window current)))
+        (switch-to-buffer-other-window current)
+        (with-current-buffer current
+          (save-excursion
+            (let ((point-start (progn (goto-char (point-max))
+                                      (goto-char (line-beginning-position))
+                                      (search-forward-regexp hs-config-buffer-prompt))))
+              (remove-text-properties point-start
+                                      (line-end-position)
+                                      '(face hs-faces-ghci-error)))))))
     (use-local-map map)))
 
 (provide 'hs-interactive-mode)

@@ -168,7 +168,7 @@
     (cond 
      ((hs-process-consume
        project
-       "^<interactive>:\\([0-9]+\\):\\([0-9]+\\):[\r\n]\\([[:unibyte:]]+?\\)\n>")
+       "^<interactive>:\\([0-9]+\\):\\([0-9]+\\):[ \r\n]\\([[:unibyte:]]+?\\)\n>")
       (let ((error-msg
              (replace-regexp-in-string
               "^    "

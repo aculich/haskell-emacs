@@ -105,10 +105,13 @@
               hs-config-process-prompt-regex
               ""
               (hs-process-response process)))
-        (progn (setf (hs-process-response-cursor process) 0)
-               (setf (hs-process-response process) "")
-               (setf (hs-process-cmd process) 'none)
-               (setf (hs-process-response-callback process) nil))))))
+        (hs-process-reset process)))))
+
+(defun hs-process-reset (process)
+  (progn (setf (hs-process-response-cursor process) 0)
+         (setf (hs-process-response process) "")
+         (setf (hs-process-cmd process) 'none)
+         (setf (hs-process-response-callback process) nil)))
 
 (defun hs-process-response-handler (project response)
   "Handle receiving a type response."
@@ -119,11 +122,12 @@
                       (hs-interactive-mode-eval-insert-result project response))
                     (hs-interactive-mode-prompt project)
                     t))
-      ('load-file (progn t))
+      ('load-file (progn;; (message response)
+                    t))
       ('tags-generate (progn (let ((tags-revert-without-query t))
                                (when (hs-process-current-dir process)
-                                   (visit-tags-table (hs-process-current-dir process))
-                                (hs-message-line (hs-lang-tags-table-updated))))
+                                 (visit-tags-table (hs-process-current-dir process))
+                                 (hs-message-line (hs-lang-tags-table-updated))))
                              t))
       ('arbitrary (progn (hs-interactive-mode-echo-read-only 
                           project
@@ -145,7 +149,8 @@
          (setf (hs-process-response-cursor process) cursor))
        (hs-interactive-mode-echo-read-only project (hs-lang-build-done))
        (hs-message-line (hs-lang-build-done))
-       t))))
+       t)
+      ('none))))
 
 (defun hs-process-live-updates (project)
   "Trigger any updates that happen during receiving a response."
@@ -154,7 +159,23 @@
       ('arbitrary (hs-process-trigger-arbitrary-updates project))
       ('load-file (hs-process-trigger-build-updates project))
       ('startup (hs-process-trigger-build-updates project))
-      ('build (hs-process-trigger-build-updates project)))))
+      ('build (hs-process-trigger-build-updates project))
+      ('eval (hs-process-trigger-eval-errors project)))))
+
+(defun hs-process-trigger-eval-errors (project)
+  "Trigger evaluation errors like compile messages or exceptions."
+  (let ((process (hs-project-process project)))
+    (cond 
+     ((hs-process-consume
+       project
+       "^<interactive>:\\([0-9]+\\):\\([0-9]+\\):[\r\n]\\([[:unibyte:]]+?\\)\n>")
+      (let ((error-msg
+             (replace-regexp-in-string
+              "^    "
+              ""
+              (match-string 3 (hs-process-response (hs-project-process project))))))
+        (hs-interactive-mode-raise (hs-project) error-msg)
+        (hs-process-reset process))))))
 
 (defun hs-process-trigger-build-updates (project)
   "Trigger the 'loading module' updates if any."

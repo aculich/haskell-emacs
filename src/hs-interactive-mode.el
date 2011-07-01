@@ -44,9 +44,9 @@
   (setq major-mode 'hs-interactive-mode)
   (setq mode-name "Interactive-Haskell")
   (run-mode-hooks 'hs-interactive-mode-hook)
-  (hs-interactive-mode-prompt (hs-project))
-  (hs-interactive-mode-welcome-message (hs-project))
-  (hs-project-choose (hs-project))
+  (hs-interactive-mode-prompt project)
+  (hs-interactive-mode-welcome-message project)
+  (hs-project-choose project)
   (use-local-map hs-interactive-mode-map)
   (make-local-variable 'hs-interactive-mode-history)
   (make-local-variable 'hs-interactive-mode-history-index)
@@ -261,5 +261,29 @@
     (set-text-properties (point-min) (point-max) nil))
   (delete-region (point-min) (point-max))
   (hs-interactive-mode-prompt (hs-project)))
+
+(defun hs-interactive-mode-raise (project msg)
+  "Raise an error buffer."
+  (lexical-let
+      ((current (current-buffer))
+       (error-buffer (get-buffer-create (format "*hs-error-%s*"
+                                                (hs-project-name project))))
+       (map (make-keymap)))
+    (switch-to-buffer-other-window error-buffer)
+    (let ((inhibit-read-only t))
+      (set-text-properties (point-min) (point-max) nil))
+    (delete-region (point-min) (point-max))
+    (insert "Interactive compile error:\n\n")
+    (insert (propertize (format "%s\n" msg)
+                        'face 'hs-faces-ghci-error
+                        'read-only t
+                        'rear-nonsticky t
+                        'error t))
+    (define-key map (kbd "q")
+      (lambda ()
+        (interactive)
+        (kill-buffer)
+        (switch-to-buffer-other-window current)))
+    (use-local-map map)))
 
 (provide 'hs-interactive-mode)

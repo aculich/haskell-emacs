@@ -60,7 +60,10 @@
   (process-send-string
    (hs-process-process (hs-project-process project))
    (concat ":!cd " (hs-cabal-dir project)
-           " && cabal-dev " command
+           " && " (if hs-config-use-cabal-dev
+                      hs-config-cabal-dev-bin
+                    "cabal") 
+           " " command
            " && cd " (hs-process-current-dir (hs-project-process project)) "\n")))
 
 (defvar hs-cabal-commands

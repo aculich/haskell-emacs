@@ -74,6 +74,9 @@
 (defun hs-lang-directory-change (dir)
   (format "New 'eadin', sir! To %s, an' beyond! ARRR!" dir))
 
+(defun hs-lang-directory-change-reload ()
+  "The winds be changin'. Run reload again and be quick about it!")
+
 (defun hs-lang-directory-does-not-exist (dir)
   (format "There be no cargo named %s! Be that a kind of treasure?" dir))
 

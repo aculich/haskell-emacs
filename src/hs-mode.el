@@ -69,7 +69,7 @@
     ;; Numbers
     ("[0-9]+\\.?[0-9]*" . font-lock-constant-face)
     ;; Operators
-    ("[-!#$%&\\*\\+\\./<=>\\?@\\\\^\\|~]+" . font-lock-operator-face)
+    ("[-!#$%&\\*\\+\\./<=>\\?@\\\\^\\|~]+" . font-lock-constant-face)
     ;; Reserved symbols
     (,(regexp-opt '(".." "::" "=" "\\" "|" "<-" "->"
                     "@" "~" "=>") t)

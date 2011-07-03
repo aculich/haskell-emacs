@@ -83,6 +83,9 @@
 (defun hs-lang-directory-change (dir)
   (format "I want you to go in that bag, and find my wallet. It's the one that says %s" dir))
 
+(defun hs-lang-directory-change-reload ()
+  "The directory was changed. An act of god. Run reload again.")
+
 (defun hs-lang-directory-does-not-exist (dir)
   (format "Say '%s' again. Say 'what' again, I dare you." dir))
 

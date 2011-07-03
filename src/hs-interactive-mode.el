@@ -281,6 +281,7 @@
                         'read-only t
                         'rear-nonsticky t
                         'error t))
+    (insert "\n(Hit q to close this buffer and return to the prompt.)\n")
     (let* ((cols (string-match "<interactive>:[0-9]+:\\([0-9]+\\)\-?\\([0-9]*\\)"
                                msg))
            (col-start (when cols (string-to-number (match-string 1 msg))))

@@ -27,8 +27,8 @@
 (defun hs-project-start (&optional name)
   (interactive)
   (hs)
-  (let ((project (hs-project-create)))
-    ))
+  (let ((project (hs-project-create name)))
+    (switch-to-buffer (hs-interactive-mode-buffer project))))
 
 (defun hs-project (&optional dont-prompt)
   "Get the current project. Default if there's only one, prompt

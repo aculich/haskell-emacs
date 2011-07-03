@@ -117,7 +117,7 @@
   "Handle receiving a type response."
   (let ((process (hs-project-process project)))
     (ecase (hs-process-cmd process)
-      ('startup t)
+      ('startup (hs-process-reset process))
       ('eval (progn (when (not (string= "" response))
                       (hs-interactive-mode-eval-insert-result project response))
                     (hs-interactive-mode-prompt project)
@@ -334,7 +334,10 @@
 (defun hs-process-load-file (project &optional file)
   "Load a file."
   (if (not (hs-process-current-dir (hs-project-process project)))
-      (hs-process-cd-interactive)
+      (progn (hs-process-cd-interactive)
+                     (hs-interactive-mode-echo-read-only
+                      project
+                      (hs-lang-directory-change-reload)))
     (let ((file-name (if file
                          file
                        (buffer-file-name))))

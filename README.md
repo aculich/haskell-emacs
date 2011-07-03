@@ -4,7 +4,11 @@ I'm still working on it. See the issue tracker for upcoming features
 and bugs. Please wait until test-cases (see “Complete unit testing”
 milestone) have been written before contributing patches.
 
-# QUICK START
+# QUICK TRY
+
+    $ emacs -nw -Q -l examples/init.el
+
+# QUICK START (custom)
 
     (add-to-list 'load-path "~/Emacs/ot/auto-complete")
     (add-to-list 'load-path "~/Emacs/me/hs/src")

@@ -74,6 +74,9 @@
 (defun hs-lang-directory-change (dir)
   (format "Directory change: %s" dir))
 
+(defun hs-lang-directory-change-reload ()
+  "The directory was changed. Please run reload again.")
+
 (defun hs-lang-directory-does-not-exist (dir)
   (format "Directory %s does not exist." dir))
 
@@ -96,7 +99,7 @@
   (format "Cabal dir%s: "
           (if cabal-file
               (format " (%s)" (file-name-nondirectory cabal-file))
-            "")))
+            " (no cabal file)")))
 
 (defun hs-lang-errors-unused () "Unused")
 (defun hs-lang-errors-missing-signature () "Signature")

@@ -28,6 +28,8 @@
 
 (defvar hs-config-cabal-bin-dir "~/.cabal/bin")
 
+(defvar hs-config-use-cabal-dev nil)
+
 (defvar hs-config-cabal-dev-bin (expand-file-name "cabal-dev" hs-config-cabal-bin-dir))
 
 (defvar hs-config-ghci-bin "ghci")

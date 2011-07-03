@@ -62,20 +62,29 @@
                                   :load-dirs '()
                                   :current-dir nil
                                   :response-callback nil)))
-    (setf (hs-process-process process)
-          (start-process
-           (hs-process-name process)
-           nil
-           hs-config-cabal-dev-bin
-           "ghci"
-           "-s"
-           (hs-project-cabal-dev-dir project)))
+    (hs-process-start-ghci project process)
     (set-process-filter (hs-process-process process) 'hs-process-filter)
     (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
     (process-send-string (hs-process-process process) ":set -v1\n")
     (process-send-string (hs-process-process process) (concat "()\n"))
     (setf (hs-project-process project) process)
     process))
+
+(defun hs-process-start-ghci (project process)
+  (if hs-config-use-cabal-dev
+      (setf (hs-process-process process)
+            (start-process
+             (hs-process-name process)
+             nil
+             hs-config-cabal-dev-bin
+             "ghci"
+             "-s"
+             (hs-project-cabal-dev-dir project)))
+    (setf (hs-process-process process)
+          (start-process
+           (hs-process-name process)
+           nil
+           hs-config-ghci-bin))))
 
 (defun hs-process-filter (proc response)
   "The filter for the process pipe."

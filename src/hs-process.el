@@ -73,6 +73,7 @@
     (set-process-filter (hs-process-process process) 'hs-process-filter)
     (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
     (process-send-string (hs-process-process process) ":set -v1\n")
+    (process-send-string (hs-process-process process) (concat "()\n"))
     (setf (hs-project-process project) process)
     process))
 
@@ -117,13 +118,14 @@
   "Handle receiving a type response."
   (let ((process (hs-project-process project)))
     (ecase (hs-process-cmd process)
-      ('startup (hs-process-reset process))
+      ('startup (hs-process-reset process)
+                (with-current-buffer (hs-interactive-mode-name project)
+                  (hs-completion)))
       ('eval (progn (when (not (string= "" response))
                       (hs-interactive-mode-eval-insert-result project response))
                     (hs-interactive-mode-prompt project)
                     t))
-      ('load-file (progn;; (message response)
-                    t))
+      ('load-file t)
       ('tags-generate (progn (let ((tags-revert-without-query t))
                                (when (hs-process-current-dir process)
                                  (visit-tags-table (hs-process-current-dir process))
@@ -335,9 +337,9 @@
   "Load a file."
   (if (not (hs-process-current-dir (hs-project-process project)))
       (progn (hs-process-cd-interactive)
-                     (hs-interactive-mode-echo-read-only
-                      project
-                      (hs-lang-directory-change-reload)))
+             (hs-interactive-mode-echo-read-only
+              project
+              (hs-lang-directory-change-reload)))
     (let ((file-name (if file
                          file
                        (buffer-file-name))))

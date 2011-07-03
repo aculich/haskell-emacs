@@ -32,7 +32,7 @@
 
 (defvar hs-config-ghci-bin "ghci")
 
-(defvar hs-config-process-prompt-regex "\\(^> $\\|\n[> ]*> $\\)")
+(defvar hs-config-process-prompt-regex "\\(^[> ]*> $\\|\n[> ]*> $\\)")
 
 (defvar hs-config-buffer-prompt "λ> ")
 

@@ -31,8 +31,12 @@
   "Send a (silent; don't tell me about it in the REPL) arbitrary command."
   (interactive)
   (let ((project (hs-project)))
-   (setf (hs-process-cmd (hs-project-process project)) 'tags-generate)
-   (process-send-string (hs-process-process (hs-project-process project))
-                        (concat hs-config-tags-cmd "\n"))))
+    (unless (hs-process-current-dir (hs-project-process project))
+      (hs-process-cd-interactive)
+      (hs-process-reset (hs-project-process project)))
+    (message "Generating tags...")
+    (setf (hs-process-cmd (hs-project-process project)) 'tags-generate)
+    (process-send-string (hs-process-process (hs-project-process project))
+                         (concat hs-config-tags-cmd "\n"))))
 
 (provide 'hs-tags)

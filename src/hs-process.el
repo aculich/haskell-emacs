@@ -185,8 +185,16 @@
               "^    "
               ""
               (match-string 3 (hs-process-response (hs-project-process project))))))
-        (hs-interactive-mode-raise (hs-project) error-msg)
-        (hs-process-reset process))))))
+        (if (string-match "^[ ]*Warning:" error-msg)
+            (let ((cursor (hs-process-response-cursor process)))
+              (setf (hs-process-response-cursor process) 0)
+              (while (hs-process-trigger-type-errors-warnings project))
+              (setf (hs-process-response process)
+                    (substring (hs-process-response process)
+                               (hs-process-response-cursor process)))
+              (setf (hs-process-response-cursor process) 0))
+          (progn (hs-interactive-mode-raise (hs-project) error-msg)
+                 (hs-process-reset process))))))))
 
 (defun hs-process-trigger-build-updates (project)
   "Trigger the 'loading module' updates if any."

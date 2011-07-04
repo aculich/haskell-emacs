@@ -38,7 +38,7 @@
   :group 'hs)
 
 (defface hs-faces-ghci-error
-  '((t :inherit 'compilation-warning))
+  '((t :inherit 'compilation-error))
   "Face for error messages."
   :group 'hs)
 

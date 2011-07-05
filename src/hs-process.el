@@ -63,6 +63,7 @@
                                   :current-dir nil
                                   :response-callback nil)))
     (hs-process-start-ghci project process)
+    (set-process-sentinel (hs-process-process process) 'hs-process-sentinel)
     (set-process-filter (hs-process-process process) 'hs-process-filter)
     (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
     (process-send-string (hs-process-process process) ":set -v1\n")
@@ -93,6 +94,23 @@
       (when (not (eq (hs-process-cmd (hs-project-process project))
                      'none))
         (hs-process-collect project response)))))
+
+(defun hs-process-sentinel (proc event)
+  "The sentinel for the process pipe."
+  (let ((event (replace-regexp-in-string "\n$" "" event)))
+    (message (hs-lang-process-ended event))
+    (let ((project (hs-process-project-by-proc proc)))
+      (when project
+        (hs-interactive-mode-echo-error project (hs-lang-process-ended event))
+        (when (and (eq 'eval (hs-process-cmd (hs-project-process project)))
+                   (string= (hs-interactive-mode-input project)
+                            ":q"))
+          (hs-interactive-mode-set-prompt ""))
+        (hs-process-prompt-restart project)))))
+
+(defun hs-process-prompt-restart (project)
+  (when (y-or-n-p "The Haskell process died. Restart? ")
+    (hs-process-start project)))
 
 (defun hs-process-project-by-proc (proc)
   "Find project by process."
@@ -129,7 +147,9 @@
     (ecase (hs-process-cmd process)
       ('startup (hs-process-reset process)
                 (with-current-buffer (hs-interactive-mode-name project)
-                  (hs-completion)))
+                  (hs-completion))
+                (hs-interactive-mode-echo-read-only
+                 project (hs-lang-welcome-message)))
       ('eval (progn (when (not (string= "" response))
                       (hs-interactive-mode-eval-insert-result project response))
                     (hs-interactive-mode-prompt project)

@@ -194,15 +194,17 @@
                     (goto-line (string-to-number line))
                     (goto-char (+ (point) (string-to-number col))))))))))))
 
+(defun hs-interactive-mode-input (project)
+  (substring (buffer-substring-no-properties
+              (save-excursion
+                (goto-char (point-max))
+                (search-backward-regexp hs-config-buffer-prompt))
+              (point-max))
+             (length hs-config-buffer-prompt)))
+
 (defun hs-interactive-mode-handle (project)
   "Take input from the current prompt."
-  (let ((input
-         (substring (buffer-substring-no-properties
-                     (save-excursion
-                       (goto-char (point-max))
-                       (search-backward-regexp hs-config-buffer-prompt))
-                     (point-max))
-                    (length hs-config-buffer-prompt))))
+  (let ((input (hs-interactive-mode-input project)))
     (unless (string= input "")
       (hs-interactive-mode-history-add input)
       (hs-process-eval project

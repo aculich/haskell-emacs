@@ -22,6 +22,10 @@
 
 (defun hs-lang-en ())
 
+(defun hs-lang-process-ended (event)
+  (format "The inferior Haskell process ended: %s"
+          event))
+
 (defun hs-lang-new-project-name ()
   "You know what the call a Quarter Pounder with cheese in France? ")
 

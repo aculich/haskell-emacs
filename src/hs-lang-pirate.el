@@ -22,6 +22,10 @@
 
 (defun hs-lang-pirate ())
 
+(defun hs-lang-process-ended (event)
+  (format "The inferior Haskell process ended: %s"
+          event))
+
 (defun hs-lang-new-project-name ()
   "Aye, what be the name? ")
 

@@ -35,4 +35,9 @@
              0
              (min (length string) n)))
 
+(defun hs-is-prefix-of (x y)
+  "Is x string a prefix of y string?"
+  (string= (substring x 0 (min (length x) (length y)))
+           (substring y 0 (min (length x) (length y)))))
+
 (provide 'hs-string)

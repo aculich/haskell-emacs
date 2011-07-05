@@ -36,7 +36,17 @@
    there're none."
   (if *hs-project*
       *hs-project*
-    (hs-project-switch-or-create dont-prompt)))
+    (or (hs-project-figure-out-from-buffer-path)
+        (hs-project-switch-or-create dont-prompt))))
+
+(defun hs-project-figure-out-from-buffer-path ()
+  "Figure out the current buffer's project based on the filename path."
+  (let ((project
+         (remove-if-not
+          (lambda (project) 
+            (hs-is-prefix-of (hs-project-cabal-dir project) (buffer-file-name))) 
+          *hs-projects*)))
+    (when (consp project) (hs-project-choose (car project)))))
 
 (defun hs-project-switch-or-create (&optional dont-prompt)
   "Switch the project or create one."

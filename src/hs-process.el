@@ -53,6 +53,13 @@
   (interactive)
   (hs-process-info-of (hs-project) (hs-ident-at-point)))
 
+(defun hs-process-info-of-passive-interactive (symbol)
+  "Send an arbitrary command (no printing in the REPL)."
+  (let ((project (hs-project)))
+    (setf (hs-process-cmd (hs-project-process project)) 'info-of-passive)
+    (process-send-string (hs-process-process (hs-project-process project))
+                         (concat ":i " symbol "\n"))))
+
 (defun hs-process-start (project)
   "Start the inferior haskell process."
   (let ((process (hs-process-make :cmd 'startup
@@ -172,6 +179,8 @@
                        t))
       ('info-of (progn (hs-message-line response)
                        (hs-interactive-mode-echo-type project response)
+                       t))
+      ('info-of-passive (progn (hs-message-line response)
                        t))
       ('build
        (let ((cursor (hs-process-response-cursor process)))

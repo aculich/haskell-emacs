@@ -140,4 +140,11 @@ May return a qualified name."
         ;; This is it.
         (buffer-substring-no-properties start end)))))
 
+(defun hs-mode-space-info ()
+  (interactive)
+  (let ((ident (hs-ident-at-point)))
+    (insert " ")
+    (when (and (stringp ident) (not (string= "" ident)))
+      (hs-process-info-of-passive-interactive ident))))
+
 (provide 'hs-mode)

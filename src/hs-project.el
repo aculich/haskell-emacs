@@ -44,7 +44,8 @@
   (let ((project
          (remove-if-not
           (lambda (project) 
-            (hs-is-prefix-of (hs-project-cabal-dir project) (buffer-file-name))) 
+            (and (buffer-file-name)
+                 (hs-is-prefix-of (hs-project-cabal-dir project) (buffer-file-name)))) 
           *hs-projects*)))
     (when (consp project) (hs-project-choose (car project)))))
 

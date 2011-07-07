@@ -54,7 +54,7 @@
   "Go to the first line of a list of consequtive import lines. Cycle."
   (if (hs-navigate-imports-line)
       (progn (hs-navigate-imports-goto-end)
-             (when (haskell-find-forward-import-line)
+             (when (hs-navigate-imports-find-forward-line)
                (hs-navigate-imports-go-internal)))
     (let ((point (hs-navigate-imports-find-forward-line)))
       (if point

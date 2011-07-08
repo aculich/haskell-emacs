@@ -181,11 +181,12 @@
                        (hs-interactive-mode-echo-type project response)
                        t))
       ('info-of-passive (progn (hs-message-line response)
-                       t))
+                               t))
       ('build
        (let ((cursor (hs-process-response-cursor process)))
          (setf (hs-process-response-cursor process) 0)
-         (while (hs-process-trigger-type-errors-warnings project))
+         (let ((error-counter 0))
+           (while (hs-process-trigger-type-errors-warnings project)))
          (setf (hs-process-response-cursor process) cursor))
        (hs-interactive-mode-echo-read-only project (hs-lang-build-done))
        (hs-message-line (hs-lang-build-done))
@@ -217,7 +218,8 @@
         (if (string-match "^[ ]*Warning:" error-msg)
             (let ((cursor (hs-process-response-cursor process)))
               (setf (hs-process-response-cursor process) 0)
-              (while (hs-process-trigger-type-errors-warnings project))
+              (let ((error-counter 0)) 
+                (while (hs-process-trigger-type-errors-warnings project)))
               (setf (hs-process-response process)
                     (substring (hs-process-response process)
                                (hs-process-response-cursor process)))
@@ -258,17 +260,20 @@
      ((hs-process-consume project "Failed, modules loaded: \\(.+\\)$")
       (let ((cursor (hs-process-response-cursor process)))
         (setf (hs-process-response-cursor process) 0)
-        (while (hs-process-trigger-type-errors-warnings project))
+        (let ((error-counter 0))
+          (while (hs-process-trigger-type-errors-warnings project)
+            (setq error-counter (1+ error-counter))))
         (setf (hs-process-response-cursor process) cursor)
-        (hs-interactive-mode-echo-error project (hs-lang-build-compilation-failed))
-        (hs-message-line (hs-lang-build-compilation-failed)))
+        (hs-interactive-mode-echo-error project (hs-lang-build-compilation-failed-simple)))
       t)
      ((hs-process-consume project "Ok, modules loaded: \\(.+\\)$")
       (let ((cursor (hs-process-response-cursor process)))
         (setf (hs-process-response-cursor process) 0)
-        (while (hs-process-trigger-type-errors-warnings project))
-        (setf (hs-process-response-cursor process) cursor)
-        (hs-message-line (hs-lang-load-ok)))
+        (let ((error-counter 0) (warning-count 0))
+          (while (hs-process-trigger-type-errors-warnings project)
+            (setq warning-count (1+ warning-count)))
+          (setf (hs-process-response-cursor process) cursor)
+          (hs-message-line (hs-lang-load-ok warning-count))))
       t)
      ((hs-process-consume project "Loading package \\([^ ]+\\) ... linking ... done.\n")
       (hs-message-line
@@ -295,14 +300,21 @@
              (col (match-string 3 (hs-process-response process)))
              (warning (string-match "^Warning: " error-msg))
              (preview-msg (hs-process-preview-error-msg error-msg warning))
-             (echo (if warning #'hs-interactive-mode-echo-warning #'hs-interactive-mode-echo-error)))
-        (funcall echo project
-                 (format "%s: %s:%s:%s: %s"
-                         (hs-errors-message-type error-msg warning)
-                         (hs-process-strip-dir project file)
-                         line
-                         col
-                         (hs-errors-reduce-error-msg preview-msg))))
+             (echo (if warning
+                       #'hs-interactive-mode-echo-warning
+                     #'hs-interactive-mode-echo-error))
+             (contextual (lambda (x)
+                           (format "%s: %s"
+                                   (hs-errors-message-type error-msg warning)
+                                   x)))
+             (final-msg (format "%s:%s:%s: %s" 
+                                (hs-process-strip-dir project file)
+                                line
+                                col
+                                (hs-errors-reduce-error-msg preview-msg))))
+        (funcall echo project (funcall contextual final-msg))
+        (when (and (= error-counter 0) (not warning))
+          (hs-message-line (hs-lang-build-compilation-failed final-msg))))
       t))))
 
 (defun hs-process-preview-error-msg (msg warning)

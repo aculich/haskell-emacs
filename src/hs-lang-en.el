@@ -59,11 +59,16 @@
 (defun hs-lang-build-linking (project)
   (format "Linking: %s" project))
 
-(defun hs-lang-build-compilation-failed ()
-  "Compilation failed.")
+(defun hs-lang-build-compilation-failed (msg)
+  (format "Compilation failed: %s" msg))
 
-(defun hs-lang-load-ok ()
-  "OK.")
+(defun hs-lang-build-compilation-failed-simple ()
+  (format "Compilation failed."))
+
+(defun hs-lang-load-ok (warnings)
+  (if (> warnings 0)
+      (format "OK, %d warning%s." warnings (if (> 1 warnings) "s" ""))
+      "OK."))
 
 (defun hs-lang-packages-flags-changed-resetting ()
   "Package flags changed, resetting and reloading.")

@@ -68,11 +68,16 @@
 (defun hs-lang-build-linking (project)
   "I want you to go in that bag, and find my wallet.")
 
-(defun hs-lang-build-compilation-failed ()
-  "I'm sorry, did I break your concentration? I didn't mean to do that. Please, continue, you were saying something about best intentions. What's the matter?")
+(defun hs-lang-build-compilation-failed (msg)
+  (format "I'm sorry, did I break your concentration? %s" msg))
 
-(defun hs-lang-load-ok ()
-  "OK.")
+(defun hs-lang-build-compilation-failed-simple (msg)
+  (format "I'm sorry, did I break your concentration? I didn't mean to do that. Please, continue, you were saying something about best intentions. What's the matter?"))
+
+(defun hs-lang-load-ok (warnings)
+  (if (> warnings 0)
+      (format "OK, %d warnings." warnings)
+      "OK."))
 
 (defun hs-lang-packages-flags-changed-resetting ()
   "That's an interesting point. Come on, let's get into character.")

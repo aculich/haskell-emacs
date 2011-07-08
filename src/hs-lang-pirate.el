@@ -59,11 +59,16 @@
 (defun hs-lang-build-linking (project)
   (format "Burrying %s where no scoundrel will ever find it, yar!" project))
 
-(defun hs-lang-build-compilation-failed ()
-  "ABANDON SHIP! DON'T FORGET THE RUM!")
+(defun hs-lang-build-compilation-failed (msg)
+  (format "ABANDON SHIP! DON'T FORGET THE RUM!" msg))
 
-(defun hs-lang-load-ok ()
-  "YAR!")
+(defun hs-lang-build-compilation-failed-simple (msg)
+  (format "ABANDON SHIP! DON'T FORGET THE RUM!"))
+
+(defun hs-lang-load-ok (warnings)
+  (if (> warnings 0)
+      (format "OK, %d warnings." warnings)
+      "YAR!"))
 
 (defun hs-lang-packages-flags-changed-resetting ()
   "Aye, the wind be changin' direction...")

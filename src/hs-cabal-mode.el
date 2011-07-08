@@ -53,7 +53,7 @@
     "install-includes" "include-dirs" "c-sources" "extra-libraries"
     "extra-lib-dirs" "cc-options" "ld-options" "frameworks"))
 
-(defvar hs-cabal-mode-mode-syntax-table
+(defvar hs-cabal-mode-syntax-table
   (let ((st (make-syntax-table)))
     ;; The comment syntax can't be described simply in syntax-table.
     ;; We could use font-lock-syntactic-keywords, but is it worth it?
@@ -88,7 +88,7 @@
   (let ((bufs ()))
     (dolist (buf hs-cabal-mode-buffers)
       (if (and (buffer-live-p buf) (not (eq buf buffer))
-               (with-current-buffer buf (derived-mode-p 'hs-cabal-mode-mode)))
+               (with-current-buffer buf (derived-mode-p 'hs-cabal-mode)))
           (push buf bufs)))
     (setq hs-cabal-mode-buffers bufs)))
 
@@ -96,7 +96,7 @@
   (hs-cabal-mode-buffers-clean (current-buffer)))
 
 ;;;###autoload
-(define-derived-mode hs-cabal-mode-mode fundamental-mode "Cabal-Config"
+(define-derived-mode hs-cabal-mode fundamental-mode "Cabal-Config"
   "Major mode for Cabal package description files."
   (set (make-local-variable 'font-lock-defaults)
        '(hs-cabal-mode-font-lock-keywords t t nil nil))

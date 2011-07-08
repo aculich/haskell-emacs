@@ -70,6 +70,9 @@
       (format "OK, %d warning%s." warnings (if (> 1 warnings) "s" ""))
       "OK."))
 
+(defun hs-lang-config-changed ()
+  "The Cabal configuration has changed.")
+
 (defun hs-lang-packages-flags-changed-resetting ()
   "Package flags changed, resetting and reloading.")
 

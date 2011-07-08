@@ -149,7 +149,7 @@
          (setf (hs-process-response-callback process) nil)))
 
 (defun hs-process-response-handler (project response)
-  "Handle receiving a type response."
+  "Handle receiving a response."
   (let ((process (hs-project-process project)))
     (ecase (hs-process-cmd process)
       ('startup (hs-process-reset process)
@@ -183,13 +183,19 @@
       ('info-of-passive (progn (hs-message-line response)
                                t))
       ('build
-       (let ((cursor (hs-process-response-cursor process)))
-         (setf (hs-process-response-cursor process) 0)
-         (let ((error-counter 0))
-           (while (hs-process-trigger-type-errors-warnings project)))
-         (setf (hs-process-response-cursor process) cursor))
-       (hs-interactive-mode-echo-read-only project (hs-lang-build-done))
-       (hs-message-line (hs-lang-build-done))
+       (if (hs-process-consume
+            project
+            "^cabal: .+?.cabal has been changed, please re-configure.")
+           (progn (hs-interactive-mode-echo-error project (hs-lang-config-changed))
+                  (hs-message-line (hs-lang-config-changed)))
+         (progn
+           (let ((cursor (hs-process-response-cursor process)))
+             (setf (hs-process-response-cursor process) 0)
+             (let ((error-counter 0))
+               (while (hs-process-trigger-type-errors-warnings project)))
+             (setf (hs-process-response-cursor process) cursor))
+           (hs-interactive-mode-echo-read-only project (hs-lang-build-done))
+           (hs-message-line (hs-lang-build-done))))
        t)
       ('none))))
 

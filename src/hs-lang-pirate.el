@@ -70,6 +70,9 @@
       (format "OK, %d warnings." warnings)
       "YAR!"))
 
+(defun hs-lang-config-changed ()
+  "The Cabal configuration has changed.")
+
 (defun hs-lang-packages-flags-changed-resetting ()
   "Aye, the wind be changin' direction...")
 

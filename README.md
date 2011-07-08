@@ -4,7 +4,7 @@ I'm still working on it. See the issue tracker for upcoming features
 and bugs. Please wait until test-cases (see “Complete unit testing”
 milestone) have been written before contributing patches.
 
-# QUICK TRY
+# QUICK TRY (includes dependencies, just run it :-)
 
     $ emacs -nw -Q -l examples/init.el
 
@@ -15,8 +15,7 @@ milestone) have been written before contributing patches.
     (add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
     (add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
 
-See examples/bindings.el for example bindings to use. Most of these
-will become default eventually.
+See examples/init.el for example bindings.
 
 I will include auto-complete and auto-complete-etags.el (and any other
 dependencies) in the distribution in future.

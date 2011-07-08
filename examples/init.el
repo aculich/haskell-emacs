@@ -55,6 +55,9 @@
  'hs-mode-hook
  (lambda ()
    (interactive)
+   ;; Space after a symbol shows its info.
+   (define-key hs-mode-map (kbd "SPC") 'hs-mode-space-info)
+
    ;; Build the current Cabal project.
    (define-key hs-mode-map (kbd "C-c C-c") 'hs-cabal-build-interactive)
 

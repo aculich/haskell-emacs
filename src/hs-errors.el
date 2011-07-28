@@ -35,6 +35,11 @@
         (warning (hs-lang-errors-warning))
         (t (hs-lang-errors-error))))
 
+(defun hs-errors-line (error-msg line)
+  (cond ((hs-errors-func-dep-mismatch error-msg)
+         (string-to-number (match-string 4 error-msg)))
+        (t line)))
+
 (defun hs-errors-reduce-error-msg (line)
   "Remove any redundancy in error/warning messages."
   (cond ((or (hs-errors-unused-p line)
@@ -45,26 +50,37 @@
          (format "%s" (match-string 1 line)))
         ((hs-errors-type-p line)
          (hs-lang-errors-x-against-y
-                 (match-string 1 line)
-                 (match-string 2 line)))
+          (match-string 1 line)
+          (match-string 2 line)))
         ((or (hs-errors-cant-deduce-p line)
              (hs-errors-no-instance-p line))
          (hs-lang-errors-x-in-y
-                 (match-string 1 line)
-                 (match-string 2 line)))
+          (match-string 1 line)
+          (match-string 2 line)))
         ((hs-errors-ambiguous-p line)
          (hs-lang-errors-x-in-y
-                 (match-string 2 line)
-                 (match-string 3 line)))
+          (match-string 2 line)
+          (match-string 3 line)))
         ((hs-errors-incomplete-do-p line)
          (hs-lang-errors-incomplete-do))
+        ((hs-errors-func-dep-mismatch line)
+         (format "Use of %s: “%s” against “%s”"
+                 (match-string 3 line)
+                 (replace-regexp-in-string "[ \t\r\n]+" " " (match-string 1 line))
+                 (replace-regexp-in-string "[ \t\r\n]+" " " (match-string 2 line))))
         (t line)))
+
+(defun hs-errors-func-dep-mismatch (line)
+  "Mismatch when using functional dependencies?"
+  (string-match "^Couldn't match expected type `\\(.+?\\)'[ \n\t\r]+against inferred type `\\([[:unibyte:]]+?\\)'[\t\n\r ]+When using functional dependencies to combine[[:unibyte:]]+?arising from a use of `\\(.+?\\)'[\n\t\r ]+at [^:]+:\\([0-9]+\\)" line))
 
 (defun hs-errors-illegal-instance (line)
   "Illegal instance declaration?"
   (string-match
    "^Illegal instance declaration for `\\(.+?\\)'"
    line))
+
+(progn (when  (format "%s:%s: “%s” against “%s”" (match-string 3 test-msg) (match-string 4 test-msg) (match-string 1 test-msg) (match-string 2 test-msg))))
 
 (defun hs-errors-cant-deduce-p (line)
   "Is it a deduction error?"

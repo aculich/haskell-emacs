@@ -315,7 +315,7 @@
                                    x)))
              (final-msg (format "%s:%s:%s: %s" 
                                 (hs-process-strip-dir project file)
-                                line
+                                (hs-errors-line error-msg line)
                                 col
                                 (hs-errors-reduce-error-msg preview-msg))))
         (funcall echo project (funcall contextual final-msg))

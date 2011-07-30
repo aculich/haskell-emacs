@@ -80,8 +80,6 @@
    "^Illegal instance declaration for `\\(.+?\\)'"
    line))
 
-(progn (when  (format "%s:%s: “%s” against “%s”" (match-string 3 test-msg) (match-string 4 test-msg) (match-string 1 test-msg) (match-string 2 test-msg))))
-
 (defun hs-errors-cant-deduce-p (line)
   "Is it a deduction error?"
   (string-match "^Could not deduce (\\(.+?\\))\n[ ]+from the context (\\(.+?\\))\n" line))

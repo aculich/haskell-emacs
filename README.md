@@ -8,13 +8,6 @@ milestone) have been written before contributing patches.
 
     $ emacs -nw -Q -l examples/init.el
 
-# QUICK START (custom)
-
-    (add-to-list 'load-path "~/Emacs/ot/auto-complete")
-    (add-to-list 'load-path "~/Emacs/me/hs/src")
-    (add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
-    (add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
-
 See examples/init.el for example bindings.
 
 I will include auto-complete and auto-complete-etags.el (and any other

@@ -377,7 +377,9 @@
   (let* ((process (hs-project-process project))
          (new-data (substring (hs-process-response process)
                               (hs-process-response-cursor process))))
-    (hs-interactive-mode-echo-read-only-incomplete project new-data)
+    (hs-interactive-mode-echo-read-only-incomplete
+     project
+     (replace-regexp-in-string "\n> $" "" new-data)) ;; Not a reliable method, but it'll do.
     (mapc 'message (split-string new-data "\n"))
     (setf (hs-process-response-cursor process)
           (+ (hs-process-response-cursor process)

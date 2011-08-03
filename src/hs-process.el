@@ -81,13 +81,14 @@
 (defun hs-process-start-ghci (project process)
   (if hs-config-use-cabal-dev
       (setf (hs-process-process process)
-            (start-process
-             (hs-process-name process)
-             nil
-             hs-config-cabal-dev-bin
-             "ghci"
-             "-s"
-             (hs-project-cabal-dev-dir project)))
+            (let ((default-directory (hs-project-cabal-dir project))) 
+              (start-process
+               (hs-process-name process)
+               nil
+               hs-config-cabal-dev-bin
+               "ghci"
+               "-s"
+               (hs-project-cabal-dev-dir project))))
     (setf (hs-process-process process)
           (start-process
            (hs-process-name process)
@@ -96,6 +97,7 @@
 
 (defun hs-process-filter (proc response)
   "The filter for the process pipe."
+  (when hs-config-echo-all (message response))
   (let ((project (hs-process-project-by-proc proc)))
     (when project
       (when (not (eq (hs-process-cmd (hs-project-process project))

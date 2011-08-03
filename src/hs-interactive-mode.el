@@ -31,9 +31,9 @@
     (define-key map (kbd "C-a") 'hs-interactive-mode-handle-start-interactive)
     (define-key map (kbd "C-c C-k") 'hs-interactive-mode-clear)
     (define-key map (kbd "M-p")
-      '(lambda () (interactive) (hs-interactive-mode-history-toggle -1)))
-    (define-key map (kbd "M-n")
       '(lambda () (interactive) (hs-interactive-mode-history-toggle 1)))
+    (define-key map (kbd "M-n")
+      '(lambda () (interactive) (hs-interactive-mode-history-toggle -1)))
     map)
   "Interactive Haskell mode map.")
 
@@ -228,20 +228,22 @@
 (defun hs-interactive-mode-history-toggle (n)
   "Toggle the history n items up or down."
   (unless (null hs-interactive-mode-history)
+    (setq hs-interactive-mode-history-index
+          (mod (+ hs-interactive-mode-history-index n)
+               (length hs-interactive-mode-history)))
     (hs-interactive-mode-set-prompt
      (nth hs-interactive-mode-history-index
-          hs-interactive-mode-history))
-    (setq hs-interactive-mode-history-index
-          (mod (+ n hs-interactive-mode-history-index)
-               (length hs-interactive-mode-history)))))
+          hs-interactive-mode-history))))
 
 (defun hs-interactive-mode-history-add (input)
   "Add item to the history."
   (setq hs-interactive-mode-history
-        (cons input
-              (remove-if (lambda (i) (string= i input))
-                         hs-interactive-mode-history)))
-  (setq hs-interactive-mode-history-index 0))
+        (cons ""
+              (cons input
+                    (remove-if (lambda (i) (or (string= i input) (string= i "")))
+                               hs-interactive-mode-history))))
+  (setq hs-interactive-mode-history-index
+        0))
 
 (defun hs-interactive-mode-set-prompt (p)
   "Set (and overwrite) the current prompt."

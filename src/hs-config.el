@@ -22,6 +22,8 @@
 
 (defun hs-config ())
 
+(defvar hs-config-echo-all nil)
+
 (defvar hs-config-show-filename-in-load-messages nil)
 
 (defvar hs-config-default-project-name "haskell")

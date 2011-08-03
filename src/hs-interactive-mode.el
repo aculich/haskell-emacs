@@ -194,24 +194,29 @@
                     (goto-line (string-to-number line))
                     (goto-char (+ (point) (string-to-number col))))))))))))
 
-(defun hs-interactive-mode-input (project)
+(defun hs-interactive-mode-input (project max)
   (substring (buffer-substring-no-properties
               (save-excursion
-                (goto-char (point-max))
+                (goto-char max)
                 (search-backward-regexp hs-config-buffer-prompt))
-              (point-max))
+              (line-end-position))
              (length hs-config-buffer-prompt)))
 
 (defun hs-interactive-mode-handle (project)
   "Take input from the current prompt."
-  (let ((input (hs-interactive-mode-input project)))
-    (unless (string= input "")
-      (hs-interactive-mode-history-add input)
-      (hs-process-eval project
-                       (replace-regexp-in-string
-                        "\n"
-                        " "
-                        input)))))
+  (let ((input (hs-interactive-mode-input project (point-max))))
+    (if (let ((prompt-pos (save-excursion
+                            (goto-char (point-max))
+                            (search-backward-regexp hs-config-buffer-prompt))))
+          (> prompt-pos (point)))
+        (hs-interactive-mode-set-prompt (hs-interactive-mode-input project (line-end-position)))
+      (unless (string= input "")
+        (hs-interactive-mode-history-add input)
+        (hs-process-eval project
+                         (replace-regexp-in-string
+                          "\n"
+                          " "
+                          input))))))
 
 (defun hs-interactive-mode-eval-insert-result (project result)
   "Insert the result of an eval."

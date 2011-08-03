@@ -37,7 +37,14 @@
   (if *hs-project*
       *hs-project*
     (or (hs-project-figure-out-from-buffer-path)
+        (hs-project-guess-from-buffer-path)
         (hs-project-switch-or-create dont-prompt))))
+
+(defun hs-project-guess-from-buffer-path ()
+  "Try a guess of a new project based on the buffer filename path."
+  (when (y-or-n-p (format "Start another project named “%s”? "
+                          (hs-project-default-project-name)))
+    (hs-project-create (hs-project-default-project-name))))
 
 (defun hs-project-figure-out-from-buffer-path ()
   "Figure out the current buffer's project based on the filename path."

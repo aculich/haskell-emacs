@@ -142,8 +142,10 @@ May return a qualified name."
 
 (defun hs-mode-space-info ()
   (interactive)
+  (insert " ")
+  (backward-char)
   (let ((ident (hs-ident-at-point)))
-    (insert " ")
+    (forward-char)
     (when (and (stringp ident) (not (string= "" ident)))
       (hs-process-info-of-passive-interactive ident))))
 

@@ -194,10 +194,10 @@
                     (goto-line (string-to-number line))
                     (goto-char (+ (point) (string-to-number col))))))))))))
 
-(defun hs-interactive-mode-input (project max)
+(defun hs-interactive-mode-input (project &optional max)
   (substring (buffer-substring-no-properties
               (save-excursion
-                (goto-char max)
+                (goto-char (max (point-max)))
                 (search-backward-regexp hs-config-buffer-prompt))
               (line-end-position))
              (length hs-config-buffer-prompt)))

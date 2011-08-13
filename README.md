@@ -6,6 +6,7 @@ milestone) have been written before contributing patches.
 
 # QUICK TRY (includes dependencies, just run it :-)
 
+    $ cabal install hasktags
     $ emacs -nw -Q -l examples/init.el
 
 See examples/init.el for example bindings.

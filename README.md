@@ -44,6 +44,7 @@ dependencies) in the distribution in future.
   * Syntax-highlighted prompt
   * Show-based value inspection
   * Module awareness
+  * Auto-insert LANGUAGE pragmas based on GHCi errors
 * Cabal integration
   * Creation! (And magit integration)
   * Configuration

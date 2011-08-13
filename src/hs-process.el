@@ -321,9 +321,19 @@
                                 col
                                 (hs-errors-reduce-error-msg preview-msg))))
         (funcall echo project (funcall contextual final-msg))
+        (hs-process-trigger-extension-suggestions project error-msg)
         (when (and (= error-counter 0) (not warning))
           (hs-message-line (hs-lang-build-compilation-failed final-msg))))
       t))))
+
+(defun hs-process-trigger-extension-suggestions (project msg)
+  "Trigger prompting to add any extension suggestions."
+  (when (string-match "\\-X\\([A-Z][A-Za-z]+\\)" msg)
+    (let* ((extension (match-string 1 msg))
+           (string (format "{-# LANGUAGE %s #-}" extension)))
+      (when (y-or-n-p (format "Add %s to the top of the file? "
+                              string))
+        (hs-mode-insert-at-top string)))))
 
 (defun hs-process-preview-error-msg (msg warning)
   "Show a concise preview of an error message."

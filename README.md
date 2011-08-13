@@ -37,6 +37,7 @@ dependencies) in the distribution in future.
 * Jump to/back-from import list for quick editing
 * Type of symbol at point (non-local)
 * Type error handling (in REPL, brings up an error buffer)
+* Auto-insert LANGUAGE pragmas based on GHCi errors
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -45,7 +46,6 @@ dependencies) in the distribution in future.
   * Syntax-highlighted prompt
   * Show-based value inspection
   * Module awareness
-  * Auto-insert LANGUAGE pragmas based on GHCi errors
 * Cabal integration
   * Creation! (And magit integration)
   * Configuration

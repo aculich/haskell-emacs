@@ -149,4 +149,9 @@ May return a qualified name."
     (when (and (stringp ident) (not (string= "" ident)))
       (hs-process-info-of-passive-interactive ident))))
 
+(defun hs-mode-insert-at-top (s)
+  "Insert some string at the top of the line."
+  (goto-char (point-min))
+  (insert (format "%s\n" s)))
+
 (provide 'hs-mode)

@@ -154,4 +154,11 @@ May return a qualified name."
   (goto-char (point-min))
   (insert (format "%s\n" s)))
 
+(defun hs-mode-insert-language-extension ()
+  "Choose a language extension and insert it at the top of the file."
+  (interactive)
+  (hs-mode-insert-at-top 
+   (format "{-# LANGUAGE %s #-}"
+           (ido-completing-read "Extension: " hs-completion-ghc-extensions))))
+
 (provide 'hs-mode)

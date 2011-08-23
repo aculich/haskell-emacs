@@ -38,6 +38,7 @@ dependencies) in the distribution in future.
 * Type of symbol at point (non-local)
 * Type error handling (in REPL, brings up an error buffer)
 * Auto-insert LANGUAGE pragmas based on GHCi errors
+* Meagre imenu support
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -77,4 +78,3 @@ dependencies) in the distribution in future.
   * Syntax-aware indentation choices
   * Inability to write syntactically incorrect code
   * Type of symbol at point (local)
-

@@ -27,7 +27,7 @@
 
 (defun hs-tags ())
 
-(defun hs-tags-generate-interactive ()
+(defun hs-tags-generate-interactive (&optional cmd)
   "Send a (silent; don't tell me about it in the REPL) arbitrary command."
   (interactive)
   (let ((project (hs-project)))
@@ -37,6 +37,8 @@
     (message "Generating tags...")
     (setf (hs-process-cmd (hs-project-process project)) 'tags-generate)
     (process-send-string (hs-process-process (hs-project-process project))
-                         (concat hs-config-tags-cmd "\n"))))
+                         (concat (if cmd
+                                     cmd
+                                   hs-config-tags-cmd) "\n"))))
 
 (provide 'hs-tags)

@@ -146,4 +146,45 @@
      (apply 'hs-lang-cabal-dir (when dir (list file)))
      (or dir default-directory))))
 
+(defun hs-cabal-create ()
+  "Create a cabal file."
+  (let* ((package-name (read-from-minibuffer "Package name: "))
+         (version (read-from-minibuffer "Version: " "0.1"))
+         (license (ido-completing-read
+                   "License: "
+                   '("BSD3"
+                     "GPL"
+                     "GPL-2"
+                     "GPL-3"
+                     "LGPL"
+                     "LGPL-2.1"
+                     "LGPL-3"
+                     "MIT"
+                     "PublicDomain"
+                     "AllRightsReserved"
+                     "OtherLicense")))
+         (author-name (read-from-minibuffer "Author name: "))
+         (maintainer-email (read-from-minibuffer "Maintainer email: "))
+         (project-homepage (read-from-minibuffer
+                            "Project homepage/repo: "))
+         (synopsis (read-from-minibuffer "Synopsis: "))
+         (category (ido-completing-read "Category: "
+                                        hs-config-cabal-categories))
+         (package-type (ido-completing-read "Package type: "
+                                            '("Library"
+                                              "Executable")))
+         (setup "import Distribution.Simple\nmain = defaultMain"))
+    (concat "Name: " package-name "\n"
+            "Version: " version "\n"
+            "Synopsis: " synopsis "\n"
+            "Description: " synopsis "\n"
+            "Homepage: " project-homepage "\n"
+            "License: " license "\n"
+            "Author: " author-name "\n"
+            "Maintainer: " maintainer-email "\n"
+            "Copyright: " (format-time-string "%Y") " by " author-name "\n"
+            "Category: " category "\n"
+            "Build-type: " "Simple" "\n"
+            "Cabal-version: " ">=1.2")))
+
 (provide 'hs-cabal)

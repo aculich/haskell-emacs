@@ -39,6 +39,7 @@ dependencies) in the distribution in future.
 * Type error handling (in REPL, brings up an error buffer)
 * Auto-insert LANGUAGE pragmas based on GHCi errors
 * Meagre imenu support
+* Creation of base Cabal projects
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
@@ -48,7 +49,6 @@ dependencies) in the distribution in future.
   * Show-based value inspection
   * Module awareness
 * Cabal integration
-  * Creation! (And magit integration)
   * Configuration
   * Automatic dependency inserting
   * Interactive creation/management of Cabal file

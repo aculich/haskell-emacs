@@ -42,7 +42,8 @@
     (hs-lang-cabal-ido-command)
     (ido-completing-read (hs-lang-cabal-ido-command) hs-cabal-commands))))
 
-(defun hs-cabal-script-interactive ()
+(defun hs-cabal-script-interactive (&optional cmd)
+  "Run a Cabal command."
   (interactive)
   (hs-process-arbitrary-command
    (hs-project)
@@ -50,9 +51,10 @@
     ":!cd "
     (hs-project-cabal-dir (hs-project))
     " && "
-    (read-from-minibuffer
-     (hs-lang-cabal-ido-script)
-     (ido-completing-read (hs-lang-cabal-ido-script) hs-config-scripts)))))
+    (or cmd
+        (read-from-minibuffer
+         (hs-lang-cabal-ido-script)
+         (ido-completing-read (hs-lang-cabal-ido-script) hs-config-scripts))))))
 
 (defun hs-cabal-command (project command)
   "Send the Cabal build command."
@@ -148,6 +150,7 @@
 
 (defun hs-cabal-create ()
   "Create a cabal file."
+  (interactive)
   (let* ((package-name (read-from-minibuffer "Package name: "))
          (version (read-from-minibuffer "Version: " "0.1"))
          (license (ido-completing-read
@@ -173,18 +176,91 @@
          (package-type (ido-completing-read "Package type: "
                                             '("Library"
                                               "Executable")))
-         (setup "import Distribution.Simple\nmain = defaultMain"))
-    (concat "Name: " package-name "\n"
-            "Version: " version "\n"
-            "Synopsis: " synopsis "\n"
-            "Description: " synopsis "\n"
-            "Homepage: " project-homepage "\n"
-            "License: " license "\n"
-            "Author: " author-name "\n"
-            "Maintainer: " maintainer-email "\n"
-            "Copyright: " (format-time-string "%Y") " by " author-name "\n"
-            "Category: " category "\n"
-            "Build-type: " "Simple" "\n"
-            "Cabal-version: " ">=1.2")))
+         (setup-contents "import Distribution.Simple\nmain = defaultMain")
+         (cabal-contents
+          (concat "-- You should fill in a longer description"
+                  " when you publish to Hackage.\n"
+                  "-- \n"
+                  "-- Hit `C-c c' to configure with this Cabal file.\n"
+                  "-- Hit `C-c C-c' to build this Cabal project in"
+                  "this or one of its associated files.\n"
+                  "\n"
+                  "Name: " package-name "\n"
+                  "Version: " version "\n"
+                  "Synopsis: " synopsis "\n"
+                  "Description: " synopsis "\n"
+                  "Homepage: " project-homepage "\n"
+                  "-- You should put a LICENSE file in "
+                  "your directory when you publish to Hackage.\n"
+                  "License: " license "\n"
+                  "Author: " author-name "\n"
+                  "Maintainer: " maintainer-email "\n"
+                  "Copyright: " (format-time-string "%Y") " by " author-name "\n"
+                  "Category: " category "\n"
+                  "Build-type: " "Simple" "\n"
+                  "Cabal-version: " ">=1.2\n\n"
+                  (if (string= "Library" package-type)
+                      (concat "Library\n"
+                              "-- Exposed-modules: \n"
+                              "-- Build-depends: \n"
+                              "-- Other-modules: \n"
+                              "-- Build-tools: \n")
+                    (concat "Executable " package-name "\n"
+                            "  -- .hs containing the Main module.\n"
+                            "  Main-is:             Main.hs\n"
+                            "  Hs-source-dirs:      src\n"
+                            "  -- Packages needed in order to build this package.\n"
+                            "  Build-depends:       base > 4 && < 5\n"
+                            "\n"
+                            "  -- Modules not exported by this package "
+                            "but required when distributing for Hackage.\n"
+                            "  -- Other-modules:       \n"
+                            "\n"
+                            "  -- Extra tools (e.g. alex, hsc2hs, ...):"
+                            "  -- Build-tools:  "))))
+         (main-contents (format (concat "{-# OPTIONS -Wall #-}\n\n"
+                                        "-- | Main entry point to project %s.\n\n"
+                                        "module Main where\n\n"
+                                        "-- | Main entry point.\n"
+                                        "main :: IO ()\n"
+                                        "main = return ()\n")
+                                package-name))
+         (cabal-file (concat package-name ".cabal"))
+         (cabal-buffer (get-buffer-create cabal-file))
+         (setup-buffer (get-buffer-create "Setup.hs"))
+         (main-buffer (when (string= "Executable" package-type)
+                        (get-buffer-create "Main.hs")))
+         (directory (hs-cabal-get-directory
+                     (format "A .cabal%s and Setup.hs buffer have been created. "
+                             (if (string= "Executable" package-type)
+                                 ", Main.hs"
+                               "")))))
+    (when (string= "Executable" package-type)
+      (make-directory (concat directory "/src") t))
+    (with-current-buffer cabal-buffer
+      (insert cabal-contents)
+      (write-file (concat directory "/" cabal-file)))
+    (with-current-buffer setup-buffer
+      (insert setup-contents)
+      (write-file (concat directory "/" "Setup.hs")))
+    (when (string= "Executable" package-type)
+      (with-current-buffer main-buffer
+        (insert main-contents)
+        (write-file (concat directory "/src/Main.hs"))))
+    (switch-to-buffer cabal-buffer)))
+
+(defun hs-cabal-get-directory (msg)
+  "Prompt for a directory, keep asking until we get one that
+exists or to create one."
+  (let ((directory (read-from-minibuffer
+                    (concat msg
+                            "Project directory to save them in: ")
+                    default-directory))) 
+    (if (file-directory-p directory)
+        directory
+      (if (y-or-n-p "Directory doesn't exist, create it [and parents]? ")
+          (progn (make-directory directory t)
+                 directory)
+        (hs-cabal-get-directory "")))))
 
 (provide 'hs-cabal)

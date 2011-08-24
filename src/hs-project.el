@@ -42,7 +42,7 @@
 
 (defun hs-project-guess-from-buffer-path ()
   "Try a guess of a new project based on the buffer filename path."
-  (when (y-or-n-p (format "Start another project named “%s”? "
+  (when (y-or-n-p (format "Start a new project named “%s”? "
                           (hs-project-default-project-name)))
     (hs-project-create (hs-project-default-project-name))))
 

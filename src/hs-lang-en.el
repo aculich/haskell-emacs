@@ -39,7 +39,7 @@
   "Welcome to Haskell. Prepare your face.")
 
 (defun hs-lang-cd-directory ()
-  "Directory: ")
+  "Source directory: ")
 
 (defun hs-lang-tags-table-updated ()
   "Tags table updated.")

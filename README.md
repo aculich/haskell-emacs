@@ -21,8 +21,8 @@ list):
 **Developing**
 
 * Patches welcome, but do it in a dev branch, not the master branch
-* Not interested in "I fixed indentation and removed whitespace" patches at
-  the moment. Only commit hunks related to a real change.
+* Not interested in "I fixed indentation and removed whitespace/I refactored X" patches at
+  the moment. Only commit hunks related to a real bugfix or new feature change.
 * Please make small, isolated patches and preferably open a
   ticket and associate your commit(s) with the ticket so that we have
   a history trace.

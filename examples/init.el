@@ -55,8 +55,12 @@
  'hs-mode-hook
  (lambda ()
    (interactive)
+   ;; Bring up the interactive mode for this project.
+   (define-key hs-mode-map (kbd "C-`") 'hs-mode-bring-interactive-mode)
+
    ;; Space after a symbol shows its info.
    (define-key hs-mode-map (kbd "SPC") 'hs-mode-space-info)
+   (define-key hs-interactive-mode-map (kbd "SPC") 'hs-mode-space-info)
 
    ;; Insert language extensions.
    (define-key hs-mode-map (kbd "C-c e") 'hs-mode-insert-language-extension)

@@ -166,4 +166,14 @@ May return a qualified name."
    (format "{-# LANGUAGE %s #-}"
            (ido-completing-read "Extension: " hs-completion-ghc-extensions))))
 
+(defun hs-mode-bring-interactive-mode ()
+  "Bring up the interactive mode for this project."
+  (interactive)
+  (let ((project (hs-project)))
+    (delete-other-windows)
+    (split-window-horizontally)
+    (switch-to-buffer-other-window
+     (hs-interactive-mode-buffer project))
+    (other-window 1)))
+
 (provide 'hs-mode)

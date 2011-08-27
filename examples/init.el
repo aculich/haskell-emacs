@@ -49,6 +49,7 @@
 ;; Setup associations with file types.
 (add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
 (add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
+(add-to-list 'auto-mode-alist '("\\.hcr\\'" . hs-core-mode))
 
 ;; Setup key bindings
 (add-hook 

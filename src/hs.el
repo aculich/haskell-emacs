@@ -37,6 +37,7 @@
 (require 'hs-completion)
 (require 'hs-tags)
 (require 'hs-types)
+(require 'hs-core-mode)
 (require 'hs-mode)
 
 (defun hs ()

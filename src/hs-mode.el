@@ -55,6 +55,7 @@
     ("[ ]+-- .*" . font-lock-comment-face)
     ("^-- | .*" . font-lock-doc-face)
     ("^--.*" . font-lock-comment-face)
+    ("{- .* -}" . font-lock-comment-face)
     ;; Strings
     (,(concat "\\(\\(\"\\|\n[ \t]*\\\\\\)\\([^\"\\\\\n]\\|\\\\.\\)"
               "*\\(\"\\|\\\\[ \t]*$\\)\\|'\\([^'\\\\\n]\\|\\\\.[^'\n]*\\)'\\)")

@@ -26,6 +26,7 @@
   (hs-project
    (:constructor hs-project-make))
   process
+  slave-process
   name
   cabal-dir
   cabal-dev-dir

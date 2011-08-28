@@ -55,9 +55,9 @@
     ("[ ]+-- .*" . font-lock-comment-face)
     ("^-- | .*" . font-lock-doc-face)
     ("^--.*" . font-lock-comment-face)
-    ("{- | .* -}" . font-lock-doc-face)
-    ("{- .* -}" . font-lock-comment-face)
-    ("{-# .* #-}" . font-lock-doc-face)
+    ("{- | [[:unibyte:]]+? -}" . font-lock-doc-face)
+    ("{- [[:unibyte:]]+? -}" . font-lock-comment-face)
+    ("{-# [[:unibyte:]]+? #-}" . font-lock-doc-face)
     ;; Strings
     (,(concat "\\(\\(\"\\|\n[ \t]*\\\\\\)\\([^\"\\\\\n]\\|\\\\.\\)"
               "*\\(\"\\|\\\\[ \t]*$\\)\\|'\\([^'\\\\\n]\\|\\\\.[^'\n]*\\)'\\)")

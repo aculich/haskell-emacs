@@ -176,7 +176,7 @@
 
 (defun hs-process-collect (project response process type)
   "Collect input for the response until receives a prompt."
-;  (message (format "%s: %s" (hs-process-name process) response))
+                                        ;  (message (format "%s: %s" (hs-process-name process) response))
   (setf (hs-process-response process)
         (concat (hs-process-response process) response))
   (while (hs-process-live-updates project process))
@@ -211,6 +211,17 @@
                   (hs-interactive-mode-prompt project)
                   t))
     ('load-file t)
+    ('load-file-prelim
+     (setf (hs-process-response-cursor process) 0)
+     (when (hs-process-consume process "Ok, modules loaded: \\(.+\\)$")
+;       (message "Ok, modules loaded. Continuing…")
+       (hs-process-reset process)
+       (setf (hs-process-cmd (hs-project-process project)) 'load-file)
+       (process-send-string (hs-process-process (hs-project-process project))
+                            (concat ":load " (hs-project-current-load-file-name
+                                              project)
+                                    "\n")))
+     t)
     ('tags-generate (progn (let ((tags-revert-without-query t))
                              (when (hs-process-current-dir process)
                                (visit-tags-table (hs-process-current-dir process))
@@ -253,6 +264,7 @@
   (case (hs-process-cmd process)
     ('arbitrary (hs-process-trigger-arbitrary-updates project process))
     ('load-file (hs-process-trigger-build-updates project process))
+    ('load-file-prelim (hs-process-trigger-build-updates project process 'prelim))
     ('startup (hs-process-trigger-build-updates project process))
     ('build (hs-process-trigger-build-updates project process))
     ('eval (hs-process-trigger-eval-errors project process))))
@@ -280,7 +292,7 @@
         (progn (hs-interactive-mode-raise (hs-project) error-msg)
                (hs-process-reset process)))))))
 
-(defun hs-process-trigger-build-updates (project process)
+(defun hs-process-trigger-build-updates (project process &optional prelim)
   "Trigger the 'loading module' updates if any."
   (cond
    ((hs-process-consume
@@ -325,7 +337,8 @@
         (while (hs-process-trigger-type-errors-warnings project process)
           (setq warning-count (1+ warning-count)))
         (setf (hs-process-response-cursor process) cursor)
-        (hs-message-line (hs-lang-load-ok warning-count))))
+        (when (not prelim)
+          (hs-message-line (hs-lang-load-ok warning-count)))))
     t)
    ((hs-process-consume process "Loading package \\([^ ]+\\) ... linking ... done.\n")
     (hs-message-line
@@ -461,9 +474,16 @@
     (let ((file-name (if file
                          file
                        (buffer-file-name))))
-      (setf (hs-process-cmd (hs-project-process project)) 'load-file)
-      (process-send-string (hs-process-process (hs-project-process project))
-                           (concat ":load " file-name "\n")))))
+      (if hs-config-preliminary-load-file
+          (progn
+            (setf (hs-project-current-load-file-name project) file-name)
+            (setf (hs-process-cmd (hs-project-slave-process project)) 'load-file-prelim)
+            (process-send-string (hs-process-process (hs-project-slave-process project))
+                                 (concat ":load " file-name "\n")))
+        (progn
+          (setf (hs-process-cmd (hs-project-process project)) 'load-file)
+          (process-send-string (hs-process-process (hs-project-process project))
+                               (concat ":load " file-name "\n")))))))
 
 (defun hs-process-cd (project dir)
   "Change current directory of the REPL."

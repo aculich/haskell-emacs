@@ -30,7 +30,8 @@
   name
   cabal-dir
   cabal-dev-dir
-  prompt-history)
+  prompt-history
+  current-load-file-name)
 
 (defstruct
   (hs-process

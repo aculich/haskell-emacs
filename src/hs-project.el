@@ -108,7 +108,8 @@
                      :name name
                      :cabal-dir cabal-dir
                      :cabal-dev-dir (concat cabal-dir "/cabal-dev")
-                     :prompt-history '()))
+                     :prompt-history '()
+                     :current-load-file-name nil))
            (buffer (hs-interactive-mode-create project)))
       (setf (hs-project-process project)
             (hs-process-start project))

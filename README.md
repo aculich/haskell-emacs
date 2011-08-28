@@ -81,6 +81,8 @@ dependencies) in the distribution in future.
 * Auto-insert LANGUAGE pragmas based on GHCi errors
 * Meagre imenu support
 * Creation of base Cabal projects
+* Preliminary loading of files in GHCi with a separate GHCi session,
+  this avoids losing type information on a failed compile
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 

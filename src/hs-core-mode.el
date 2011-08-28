@@ -76,5 +76,5 @@ prefixes in the current buffer."
 (define-derived-mode hs-core-mode hs-mode "Haskell-Core"
   "Major mode for GHC Core files.")
 
-(provide 'hs-core)
+(provide 'hs-core-mode)
 ;;; hs-core.el ends here

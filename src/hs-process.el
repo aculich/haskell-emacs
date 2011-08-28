@@ -60,10 +60,14 @@
     (process-send-string (hs-process-process (hs-project-process project))
                          (concat ":i " symbol "\n"))))
 
-(defun hs-process-start (project)
+(defun hs-process-start (project &optional name)
   "Start the inferior haskell process."
   (let ((process (hs-process-make :cmd 'startup
-                                  :name (hs-project-name project)
+                                  :name (if name
+                                            (format "%s-%s"
+                                                    (hs-project-name project)
+                                                    name)
+                                          (hs-project-name project))
                                   :response ""
                                   :response-cursor 0
                                   :load-dirs '()
@@ -75,7 +79,6 @@
     (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
     (process-send-string (hs-process-process process) ":set -v1\n")
     (process-send-string (hs-process-process process) (concat "()\n"))
-    (setf (hs-project-process project) process)
     process))
 
 (defun hs-process-start-ghci (project process)
@@ -119,7 +122,8 @@
 
 (defun hs-process-prompt-restart (project)
   (when (y-or-n-p "The Haskell process died. Restart? ")
-    (hs-process-start project)))
+    (setf (hs-project-process project)
+          (hs-process-start project))))
 
 (defun hs-process-project-by-proc (proc)
   "Find project by process."

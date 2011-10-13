@@ -45,11 +45,14 @@
       (let ((current-level (hs-move-nested-indent-level)))
         (let ((start-point (line-beginning-position))
               (start-end-point (line-end-position))
-              (end-point nil))
+              (end-point nil)
+              (last-line 0))
           (forward-line)
-          (while (or (> (hs-move-nested-indent-level) starting-level)
-                     (and (> current-level starting-level)
-                          (>= (hs-move-nested-indent-level) current-level)))
+          (while (and (not (= (line-beginning-position) last-line))
+                      (or (> (hs-move-nested-indent-level) starting-level)
+                          (and (> current-level starting-level)
+                               (>= (hs-move-nested-indent-level) current-level))))
+            (setq last-line (line-beginning-position))
             (setq end-point (line-end-position))
             (forward-line))
           (cons start-point (or end-point
@@ -64,5 +67,15 @@
          (or (save-excursion (goto-char (line-beginning-position))
                              (search-forward-regexp "[^ ]" (line-end-position) t 1))
              (line-beginning-position)))))))
+
+(defun hs-kill-nested ()
+  "Kill the nested region after this."
+  (interactive)
+  (let ((start (point))
+        (reg (save-excursion
+               (search-backward-regexp "^[ ]+" (line-beginning-position) t 1)
+               (search-forward-regexp "[^ ]" (line-end-position) t 1)
+               (hs-move-nested-region))))
+    (kill-region start (cdr reg))))
 
 (provide 'hs-move-nested)
